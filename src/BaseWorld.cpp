@@ -72,4 +72,49 @@ void BaseWorld::gotMessage( ofMessage msg )
 void BaseWorld::addEntity( BaseEntity* entity )
 {
 	m_entities.push_back( entity );
+	entity->setWorld( this );
+	entity->added();
+}
+
+BaseEntity* BaseWorld::collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, BaseEntity* except/* = NULL*/ )
+{
+	for ( unsigned int i = 0; i < m_entities.size(); ++i )
+	{
+		BaseEntity* const e = m_entities[ i ];
+
+		if ( e->getType() == type )
+		{
+			if ( e->isCollidable() && e->collideRect( e->getPosX(), e->getPosY(), rX, rY, rWidth, rHeight ) )
+			{
+				if ( except )
+				{
+					if ( e != except )
+					{
+						return e;
+					}
+				}
+				else
+				{
+					return e;
+				}
+			}
+		}
+	}
+	return NULL;
+}
+
+void BaseWorld::collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* > into )
+{
+	for ( unsigned int i = 0; i < m_entities.size(); ++i )
+	{
+		BaseEntity* const e = m_entities[ i ];
+
+		if ( e->getType() == type )
+		{
+			if ( e->isCollidable() && e->collideRect( e->getPosX(), e->getPosY(), rX, rY, rWidth, rHeight ) )
+			{
+				into.push_back( e );
+			}
+		}
+	}
 }

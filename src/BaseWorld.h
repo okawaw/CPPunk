@@ -2,6 +2,7 @@
 #define BASE_WORLD_H
 
 #include "BaseEntity.h"
+#include "BaseEntityDefs.h"
 
 #include <vector>
 
@@ -29,6 +30,9 @@ public:
 	virtual void gotMessage( ofMessage msg );
 
 	void addEntity( BaseEntity* entity );
+
+	BaseEntity* collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, BaseEntity* except = NULL );
+	void collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* > into );
 
 private:
 	std::vector< BaseEntity* > m_entities;
