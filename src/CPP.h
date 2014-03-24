@@ -43,7 +43,7 @@ private:
 
 	static unsigned int m_frameRate;                  // Desired frame rate of the game.
 
-	static StateHandler m_stateHandler;
+	static StateHandler m_stateHandler;               // StateHandler for the game.
 };
 
 #endif
