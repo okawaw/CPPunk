@@ -13,51 +13,45 @@ public:
 	BaseEntity( const std::string& graphicFile = "", float x = 0, float y = 0 );
 	virtual ~BaseEntity();
 
-	bool isVisible() const { return m_bVisible; }
-	void setVisible( const bool visible ) { m_bVisible = visible; }
+	bool isVisible() const;
+	void setVisible( const bool visible );
 
-	bool isCollidable() const { return m_bCollidable; }
-	void setCollidable( const bool collidable ) { m_bCollidable = collidable; }
+	bool isCollidable() const;
+	void setCollidable( const bool collidable );
 
-	float getPosX() const { return m_posX; }
-	float getPosY() const { return m_posY; }
-	void setPosX( const float x ) { m_posX = x; }
-	void setPosY( const float y ) { m_posY = y; }
+	float getPosX() const;
+	float getPosY() const;
+	void setPosX( const float x );
+	void setPosY( const float y );
 
-	int getWidth() const { return m_width; }
-	int getHeight() const { return m_height; }
-	void setWidth( const int width ) { m_width = width; }
-	void setHeight( const int height ) { m_height = height; }
-	float getHalfWidth() const { return ( ( float )m_width / 2.0 ); }
-	float getHalfHeight() const { return ( ( float )m_height / 2.0 ); }
+	int getWidth() const;
+	int getHeight() const;
+	void setWidth( const int width );
+	void setHeight( const int height );
+	float getHalfWidth() const;
+	float getHalfHeight() const;
 
-	int getOriginX() const { return m_originX; }
-	int getOriginY() const { return m_originY; }
-	void setOriginX( const int x ) { m_originX = x; }
-	void setOriginY( const int y ) { m_originY = y; }
-	void centerOrigin() { m_originX = ( ( float )m_width / 2.0 ); m_originY = ( ( float )m_height / 2.0 ); }
+	int getOriginX() const;
+	int getOriginY() const;
+	void setOriginX( const int x );
+	void setOriginY( const int y );
+	void centerOrigin();
 
-	BaseEntityTypes::id getType() const { return m_type; }
-	void setType( const BaseEntityTypes::id type ) { m_type = type; }
+	BaseEntityTypes::id getType() const;
+	void setType( const BaseEntityTypes::id type );
 
-	float getCenterX() const { return m_posX - m_originX + ( ( float )m_width / 2.0 ); }
-	float getCenterY() const { return m_posY - m_originY + ( ( float )m_height / 2.0 ); }
+	float getCenterX() const;
+	float getCenterY() const;
 
-	float getLeft() const { return m_posX - m_originX; }
-	float getRight() const { return m_posX - m_originX + m_width; }
-	float getTop() const { return m_posY - m_originY; }
-	float getBottom() const { return m_posY - m_originY + m_height; }
+	float getLeft() const;
+	float getRight() const;
+	float getTop() const;
+	float getBottom() const;
 
-	int getLater() const { return m_layer; }
-	int setLayer( const int layer ) { m_layer = layer; }
+	int getLater() const;
+	void setLayer( const int layer );
 
-	void setHitbox( int width, int height, int originX, int originY )
-	{
-		m_width = width;
-		m_height = height;
-		m_originX = originX;
-		m_originY = originY;
-	}
+	void setHitbox( const int width, const int height, const int originX, const int originY );
 
 
 	// TODO: bool onCamera() const;

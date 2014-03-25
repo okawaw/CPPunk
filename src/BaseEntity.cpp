@@ -36,6 +36,52 @@ BaseEntity::~BaseEntity()
 {
 }
 
+bool BaseEntity::isVisible() const { return m_bVisible; }
+void BaseEntity::setVisible( const bool visible ) { m_bVisible = visible; }
+
+bool BaseEntity::isCollidable() const { return m_bCollidable; }
+void BaseEntity::setCollidable( const bool collidable ) { m_bCollidable = collidable; }
+
+float BaseEntity::getPosX() const { return m_posX; }
+float BaseEntity::getPosY() const { return m_posY; }
+void BaseEntity::setPosX( const float x ) { m_posX = x; }
+void BaseEntity::setPosY( const float y ) { m_posY = y; }
+
+int BaseEntity::getWidth() const { return m_width; }
+int BaseEntity::getHeight() const { return m_height; }
+void BaseEntity::setWidth( const int width ) { m_width = width; }
+void BaseEntity::setHeight( const int height ) { m_height = height; }
+float BaseEntity::getHalfWidth() const { return ( ( float )m_width / 2.0 ); }
+float BaseEntity::getHalfHeight() const { return ( ( float )m_height / 2.0 ); }
+
+int BaseEntity::getOriginX() const { return m_originX; }
+int BaseEntity::getOriginY() const { return m_originY; }
+void BaseEntity::setOriginX( const int x ) { m_originX = x; }
+void BaseEntity::setOriginY( const int y ) { m_originY = y; }
+void BaseEntity::centerOrigin() { m_originX = ( ( float )m_width / 2.0 ); m_originY = ( ( float )m_height / 2.0 ); }
+
+BaseEntityTypes::id BaseEntity::getType() const { return m_type; }
+void BaseEntity::setType( const BaseEntityTypes::id type ) { m_type = type; }
+
+float BaseEntity::getCenterX() const { return m_posX - m_originX + ( ( float )m_width / 2.0 ); }
+float BaseEntity::getCenterY() const { return m_posY - m_originY + ( ( float )m_height / 2.0 ); }
+
+float BaseEntity::getLeft() const { return m_posX - m_originX; }
+float BaseEntity::getRight() const { return m_posX - m_originX + m_width; }
+float BaseEntity::getTop() const { return m_posY - m_originY; }
+float BaseEntity::getBottom() const { return m_posY - m_originY + m_height; }
+
+int BaseEntity::getLater() const { return m_layer; }
+void BaseEntity::setLayer( const int layer ) { m_layer = layer; }
+
+void BaseEntity::setHitbox( const int width, const int height, const int originX, const int originY )
+{
+	m_width = width;
+	m_height = height;
+	m_originX = originX;
+	m_originY = originY;
+}
+
 void BaseEntity::setGraphic( const std::string& file )
 {
 	if ( m_graphic.isAllocated() )
