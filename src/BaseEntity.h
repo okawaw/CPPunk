@@ -7,7 +7,7 @@
 
 class BaseWorld;
 
-class BaseEntity
+class BaseEntity   // TODO: move all definitions to cpp file.
 {
 public:
 	BaseEntity( const std::string& graphicFile = "", float x = 0, float y = 0 );
@@ -28,14 +28,39 @@ public:
 	int getHeight() const { return m_height; }
 	void setWidth( const int width ) { m_width = width; }
 	void setHeight( const int height ) { m_height = height; }
+	float getHalfWidth() const { return ( ( float )m_width / 2.0 ); }
+	float getHalfHeight() const { return ( ( float )m_height / 2.0 ); }
 
 	int getOriginX() const { return m_originX; }
 	int getOriginY() const { return m_originY; }
 	void setOriginX( const int x ) { m_originX = x; }
 	void setOriginY( const int y ) { m_originY = y; }
+	void centerOrigin() { m_originX = ( ( float )m_width / 2.0 ); m_originY = ( ( float )m_height / 2.0 ); }
 
-	void setType( const BaseEntityTypes::id type ) { m_type = type; }
 	BaseEntityTypes::id getType() const { return m_type; }
+	void setType( const BaseEntityTypes::id type ) { m_type = type; }
+
+	float getCenterX() const { return m_posX - m_originX + ( ( float )m_width / 2.0 ); }
+	float getCenterY() const { return m_posY - m_originY + ( ( float )m_height / 2.0 ); }
+
+	float getLeft() const { return m_posX - m_originX; }
+	float getRight() const { return m_posX - m_originX + m_width; }
+	float getTop() const { return m_posY - m_originY; }
+	float getBottom() const { return m_posY - m_originY + m_height; }
+
+	int getLater() const { return m_layer; }
+	int setLayer( const int layer ) { m_layer = layer; }
+
+	void setHitbox( int width, int height, int originX, int originY )
+	{
+		m_width = width;
+		m_height = height;
+		m_originX = originX;
+		m_originY = originY;
+	}
+
+
+	// TODO: bool onCamera() const;
 
 	void setGraphic( const std::string& file );
 
@@ -50,9 +75,33 @@ public:
 
 	BaseEntity* collide( BaseEntityTypes::id type,              // Checks for a collision against an Entity type.
 	                     float x, float y );
+
 	bool collideRect( float x, float y,                         // Checks if this Entity overlaps the specified rectangle.
 	                  float rX, float rY,
 	                  float rWidth, float rHeight );
+
+	BaseEntity* collideTypes( std::vector< BaseEntityTypes::id >& types, // Checks for collision against multiple Entity types.
+	                          float x, float y );
+
+	// Checks if this Entity collides with a specific Entity.
+	BaseEntity* collideWith( BaseEntity* e, float x, float y );
+
+	// Checks if this Entity overlaps the specified position.
+	bool collidePoint( float x, float y, float pX, float pY );
+
+	// Populates a vector with all collided Entities of a type.
+	void collideInto( BaseEntityTypes::id type, float x, float y, std::vector< BaseEntity* >& into );
+
+	// Calculates the distance from another Entity.
+	float distanceFrom( BaseEntity* e, bool useHitboxes = false );
+
+	// Calculates the distance from this Entity to the point.
+	float distanceToPoint( float pX, float pY, bool useHitBox = false );
+
+	// Calculates the distance from this Entity to the Rectangle.
+	float distanceToRectangle( float rX, float rY, float rWidth, float rHeight );
+
+
 
 private:
 	bool m_bVisible;                                            // If the Entity should render.
@@ -71,6 +120,7 @@ private:
 
 	int m_layer;                                                // Layer of the Entity.
 
+	// TODO: make Graphic class.
 	ofImage m_graphic;                                          // Graphic used when drawing the Entity.
 
 	BaseWorld* m_world;                                         // World that this entity is in.

@@ -103,7 +103,7 @@ BaseEntity* BaseWorld::collideRect( BaseEntityTypes::id type, float rX, float rY
 	return NULL;
 }
 
-void BaseWorld::collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* > into )
+void BaseWorld::collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* >& into, BaseEntity* except/* = NULL*/ )
 {
 	for ( unsigned int i = 0; i < m_entities.size(); ++i )
 	{
@@ -113,7 +113,17 @@ void BaseWorld::collideRectInto( BaseEntityTypes::id type, float rX, float rY, f
 		{
 			if ( e->isCollidable() && e->collideRect( e->getPosX(), e->getPosY(), rX, rY, rWidth, rHeight ) )
 			{
-				into.push_back( e );
+				if ( except )
+				{
+					if ( e != except )
+					{
+						into.push_back( e );
+					}
+				}
+				else
+				{
+					into.push_back( e );
+				}
 			}
 		}
 	}

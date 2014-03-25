@@ -35,6 +35,12 @@ public:
 
 	static void setFrameRate( unsigned int frameRate );
 
+	static float distance( float x1, float y1, float x2, float y2 );
+	static float distanceRects( float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2 );
+
+	// Find the distance between a point and a rectangle. Returns 0 if the point is within the rectangle.
+	static float distanceRectPoint( float pX, float pY, float rX, float rY, float rW, float rH );
+
 private:
 	static unsigned int m_width;                      // Width of the game.
 	static unsigned int m_height;                     // Height of the game.

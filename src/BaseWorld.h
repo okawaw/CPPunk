@@ -32,7 +32,7 @@ public:
 	void addEntity( BaseEntity* entity );
 
 	BaseEntity* collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, BaseEntity* except = NULL );
-	void collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* > into );
+	void collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* >& into, BaseEntity* except = NULL );
 
 private:
 	std::vector< BaseEntity* > m_entities;
