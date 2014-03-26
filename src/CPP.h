@@ -6,6 +6,8 @@
 #include "StateHandler.h"
 #include "BaseWorld.h"
 
+#include "ofCamera.h"
+
 #include <string>
 
 class CPP : public ofBaseApp
@@ -35,6 +37,12 @@ public:
 
 	static void setFrameRate( unsigned int frameRate );
 
+	static float getCameraX();
+	static float getCameraY();
+	static void setCameraX( float x );
+	static void setCameraY( float y );
+	static void setCameraPos( float x, float y );
+
 	static float distance( float x1, float y1, float x2, float y2 );
 	static float distanceRects( float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2 );
 
@@ -50,6 +58,8 @@ private:
 	static unsigned int m_frameRate;                  // Desired frame rate of the game.
 
 	static StateHandler m_stateHandler;               // StateHandler for the game.
+
+	static ofCamera m_camera;                         // Camera for the game.
 };
 
 #endif

@@ -7,9 +7,9 @@
 
 class BaseWorld;
 
-class BaseEntity   // TODO: move all definitions to cpp file.
+class BaseEntity
 {
-public:
+public:                                  // TODO: Pass a Graphic once it is implemented.
 	BaseEntity( const std::string& graphicFile = "", float x = 0, float y = 0 );
 	virtual ~BaseEntity();
 

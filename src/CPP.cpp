@@ -2,6 +2,8 @@
 
 #include "ofAppRunner.h"
 
+static const int CAMERA_Z = 100;
+
 static const std::string VERSION = "1.0.0";       // The CPPunk major version.
 
 unsigned int CPP::m_width;                        // Width of the game.
@@ -13,6 +15,8 @@ unsigned int CPP::m_frameRate;                    // Desired frame rate of the g
 
 StateHandler CPP::m_stateHandler;                 // Static state handler.
 
+ofCamera CPP::m_camera;                           // Camera for the game.
+
 CPP::CPP()
 {
 }
@@ -20,6 +24,12 @@ CPP::CPP()
 //--------------------------------------------------------------
 void CPP::setup()
 {
+	// Set world camera to orthographic mode.
+	m_camera.enableOrtho();
+	// Move camera's top left position to (0, 0) by default.
+	m_camera.setPosition( 0, m_height, CAMERA_Z );                            // IMPORTANT! Camera's y position must be sum of position and screen height.
+	// Flip camera's y values to prevent mirroring.
+	m_camera.setScale( 1, -1, 1 );
 }
 
 //--------------------------------------------------------------
@@ -31,7 +41,9 @@ void CPP::update()
 //--------------------------------------------------------------
 void CPP::draw()
 {
+	m_camera.begin();
 	m_stateHandler.draw();
+	m_camera.end();
 }
 
 //--------------------------------------------------------------
@@ -73,6 +85,9 @@ void CPP::mouseReleased( int x, int y, int button )
 //--------------------------------------------------------------
 void CPP::windowResized( int w, int h )
 {
+	// HACK: Somehow prevent resizing.
+	ofSetWindowShape( m_width, m_height );
+
 	m_stateHandler.windowResized( w, h );
 }
 
@@ -110,6 +125,32 @@ void CPP::setFrameRate( unsigned int frameRate )
 	m_frameRate = frameRate;
 	ofSetFrameRate( frameRate );
 }
+
+float CPP::getCameraX()
+{
+	return m_camera.getPosition().x;
+}
+
+float CPP::getCameraY()
+{
+	return m_camera.getPosition().y;
+}
+
+void CPP::setCameraX( float x )
+{
+	m_camera.setPosition( x, m_camera.getPosition().y, CAMERA_Z );
+}
+
+void CPP::setCameraY( float y )
+{
+	m_camera.setPosition( m_camera.getPosition().x, y + m_height, CAMERA_Z );
+}
+
+void CPP::setCameraPos( float x, float y )
+{
+	m_camera.setPosition( x, y + m_height, CAMERA_Z );
+}
+
 // TODO: Write squareDistance
 float CPP::distance( float x1, float y1, float x2, float y2 )
 {
