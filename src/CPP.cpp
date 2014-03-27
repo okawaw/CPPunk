@@ -108,6 +108,11 @@ void CPP::setWorld( BaseWorld* newWorld )
 	m_stateHandler.changeWorld( newWorld );
 }
 
+unsigned int CPP::getWidth() { return m_width; }
+unsigned int CPP::getHeight() { return m_height; }
+float CPP::getHalfWidth() { return m_halfWidth; }
+float CPP::getHalfHeight() { return m_halfHeight; }
+
 void CPP::setWidth( unsigned int width )
 {
 	m_width = width;
@@ -133,7 +138,7 @@ float CPP::getCameraX()
 
 float CPP::getCameraY()
 {
-	return m_camera.getPosition().y;
+	return m_camera.getPosition().y - m_height;
 }
 
 void CPP::setCameraX( float x )

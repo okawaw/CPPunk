@@ -7,10 +7,10 @@ BaseWorld::BaseWorld()
 
 BaseWorld::~BaseWorld()
 {
-	for ( unsigned int i = 0; i < m_entities.size(); ++i )
+	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
-		delete m_entities[ i ];
-	}
+		delete *i;
+	}	
 }
 
 void BaseWorld::setup()
@@ -19,17 +19,17 @@ void BaseWorld::setup()
 
 void BaseWorld::update()
 {
-	for ( unsigned int i = 0; i < m_entities.size(); ++i )
+	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
-		m_entities[ i ]->update();
+		( *i )->update();
 	}
 }
 
 void BaseWorld::draw()
 {
-	for ( unsigned int i = 0; i < m_entities.size(); ++i )
+	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
-		m_entities[ i ]->draw();
+		( *i )->draw();
 	}
 }
 
@@ -69,18 +69,59 @@ void BaseWorld::gotMessage( ofMessage msg )
 {
 }
 
-void BaseWorld::addEntity( BaseEntity* entity )
+void BaseWorld::addEntity( BaseEntity* entity, bool quiet/* = false*/ )
 {
-	m_entities.push_back( entity );
+	if ( m_entities.insert( entity ).second == false )
+	{
+		std::cout << "ERROR: the entity is already in this World." << std::endl;
+		return;
+	}
+
 	entity->setWorld( this );
-	entity->added();
+
+	if ( !quiet )
+	{
+		entity->added();
+	}
 }
 
-BaseEntity* BaseWorld::collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, BaseEntity* except/* = NULL*/ )
+BaseEntity* BaseWorld::removeEntity( BaseEntity* entity, bool quiet/* = false*/ )
 {
-	for ( unsigned int i = 0; i < m_entities.size(); ++i )
+	if ( m_entities.erase( entity ) != 1 )
 	{
-		BaseEntity* const e = m_entities[ i ];
+		std::cout << "ERROR: this Entity is not in this World." << std::endl;
+		return NULL;
+	}
+
+	entity->setWorld( NULL );
+
+	if ( !quiet )
+	{
+		entity->removed();
+	}
+
+	return entity;
+}
+
+void BaseWorld::updateEntityLayer( BaseEntity* entity, int layer )
+{
+	if ( m_entities.erase( entity ) != 1 )
+	{
+		std::cout << "ERROR: this Entity is not in this World." << std::endl;
+		return;
+	}
+
+	entity->setWorld( NULL );
+	entity->setLayer( layer );
+	entity->setWorld( this );
+	m_entities.insert( entity );
+}
+
+BaseEntity* BaseWorld::collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, const BaseEntity* except/* = NULL*/ ) const
+{
+	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
+	{
+		BaseEntity* const e = ( *i );
 
 		if ( e->getType() == type )
 		{
@@ -103,11 +144,11 @@ BaseEntity* BaseWorld::collideRect( BaseEntityTypes::id type, float rX, float rY
 	return NULL;
 }
 
-void BaseWorld::collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* >& into, BaseEntity* except/* = NULL*/ )
+void BaseWorld::collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* >& into, const BaseEntity* except/* = NULL*/ ) const
 {
-	for ( unsigned int i = 0; i < m_entities.size(); ++i )
+	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
-		BaseEntity* const e = m_entities[ i ];
+		BaseEntity* const e = ( *i );
 
 		if ( e->getType() == type )
 		{

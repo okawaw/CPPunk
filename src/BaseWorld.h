@@ -4,7 +4,7 @@
 #include "BaseEntity.h"
 #include "BaseEntityDefs.h"
 
-#include <vector>
+#include <set>
 
 #include "ofEvents.h"
 
@@ -29,13 +29,15 @@ public:
 	virtual void dragEvent( ofDragInfo dragInfo );
 	virtual void gotMessage( ofMessage msg );
 
-	void addEntity( BaseEntity* entity );
+	void addEntity( BaseEntity* entity, bool quiet = false );
+	BaseEntity* removeEntity( BaseEntity* entity, bool quiet = false );
+	void updateEntityLayer( BaseEntity* entity, int layer );
 
-	BaseEntity* collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, BaseEntity* except = NULL );
-	void collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* >& into, BaseEntity* except = NULL );
+	BaseEntity* collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, const BaseEntity* except = NULL ) const;
+	void collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* >& into, const BaseEntity* except = NULL ) const;
 
 private:
-	std::vector< BaseEntity* > m_entities;
+	std::set< BaseEntity*, BaseEntity::ptrCmp > m_entities;
 };
 
 #endif

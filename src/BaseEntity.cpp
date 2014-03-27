@@ -36,6 +36,11 @@ BaseEntity::~BaseEntity()
 {
 }
 
+bool BaseEntity::ptrCmp::operator()( const BaseEntity* left, const BaseEntity* right )
+{
+	return ( left->m_layer == right->m_layer ) ? left < right : left->m_layer > right->m_layer;
+}
+
 bool BaseEntity::isVisible() const { return m_bVisible; }
 void BaseEntity::setVisible( const bool visible ) { m_bVisible = visible; }
 
@@ -71,8 +76,19 @@ float BaseEntity::getRight() const { return m_posX - m_originX + m_width; }
 float BaseEntity::getTop() const { return m_posY - m_originY; }
 float BaseEntity::getBottom() const { return m_posY - m_originY + m_height; }
 
-int BaseEntity::getLater() const { return m_layer; }
-void BaseEntity::setLayer( const int layer ) { m_layer = layer; }
+int BaseEntity::getLayer() const { return m_layer; }
+void BaseEntity::setLayer( const int layer )
+{	
+	// Reinsert this entity into its world to make sure it draws in the correct order.
+	if ( m_world )
+	{
+		m_world->updateEntityLayer( this, layer );
+	}
+	else
+	{
+		m_layer = layer;
+	}
+}
 
 void BaseEntity::setHitbox( const int width, const int height, const int originX, const int originY )
 {
@@ -80,6 +96,11 @@ void BaseEntity::setHitbox( const int width, const int height, const int originX
 	m_height = height;
 	m_originX = originX;
 	m_originY = originY;
+}
+
+bool BaseEntity::onCamera() const
+{
+	return collideRect( m_posX, m_posY, CPP::getCameraX(), CPP::getCameraY(), CPP::getWidth(), CPP::getHeight() );
 }
 
 void BaseEntity::setGraphic( const std::string& file )
@@ -147,7 +168,7 @@ void BaseEntity::removed()
 {
 }
 
-BaseEntity* BaseEntity::collide( BaseEntityTypes::id type, float x, float y )
+BaseEntity* BaseEntity::collide( BaseEntityTypes::id type, float x, float y ) const
 {
 	if ( !m_world )
 	{
@@ -157,7 +178,7 @@ BaseEntity* BaseEntity::collide( BaseEntityTypes::id type, float x, float y )
 	return m_world->collideRect( type, x - m_originX, y - m_originY, m_width, m_height, this );
 }
 
-bool BaseEntity::collideRect( float x, float y, float rX, float rY, float rWidth, float rHeight )
+bool BaseEntity::collideRect( float x, float y, float rX, float rY, float rWidth, float rHeight ) const
 {
 	return (    x - m_originX + m_width >= rX && y - m_originY + m_height >= rY
 	         && x - m_originX <= rX + rWidth && y - m_originY <= rY + rHeight );

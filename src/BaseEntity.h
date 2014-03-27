@@ -9,6 +9,12 @@ class BaseWorld;
 
 class BaseEntity
 {
+public:
+	struct ptrCmp
+	{
+		bool operator()( const BaseEntity* left, const BaseEntity* right );
+	};
+
 public:                                  // TODO: Pass a Graphic once it is implemented.
 	BaseEntity( const std::string& graphicFile = "", float x = 0, float y = 0 );
 	virtual ~BaseEntity();
@@ -48,13 +54,12 @@ public:                                  // TODO: Pass a Graphic once it is impl
 	float getTop() const;
 	float getBottom() const;
 
-	int getLater() const;
+	int getLayer() const;
 	void setLayer( const int layer );
 
 	void setHitbox( const int width, const int height, const int originX, const int originY );
 
-
-	// TODO: bool onCamera() const;
+	bool onCamera() const;
 
 	void setGraphic( const std::string& file );
 
@@ -68,11 +73,11 @@ public:                                  // TODO: Pass a Graphic once it is impl
 	void setWorld( BaseWorld* const world ) { m_world = world; }
 
 	BaseEntity* collide( BaseEntityTypes::id type,              // Checks for a collision against an Entity type.
-	                     float x, float y );
+	                     float x, float y ) const;
 
 	bool collideRect( float x, float y,                         // Checks if this Entity overlaps the specified rectangle.
 	                  float rX, float rY,
-	                  float rWidth, float rHeight );
+	                  float rWidth, float rHeight ) const;
 
 	BaseEntity* collideTypes( std::vector< BaseEntityTypes::id >& types, // Checks for collision against multiple Entity types.
 	                          float x, float y );
@@ -97,7 +102,7 @@ public:                                  // TODO: Pass a Graphic once it is impl
 
 
 
-private:
+protected:
 	bool m_bVisible;                                            // If the Entity should render.
 	bool m_bCollidable;                                         // If the Entity should respond to collision checks.
 
@@ -114,10 +119,11 @@ private:
 
 	int m_layer;                                                // Layer of the Entity.
 
+	BaseWorld* m_world;                                         // World that this entity is in.
+
+private:
 	// TODO: make Graphic class.
 	ofImage m_graphic;                                          // Graphic used when drawing the Entity.
-
-	BaseWorld* m_world;                                         // World that this entity is in.
 };
 
 #endif

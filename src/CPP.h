@@ -32,6 +32,11 @@ public:
 
 
 	static void setWorld( BaseWorld* newWorld );
+
+	static unsigned int getWidth();
+	static unsigned int getHeight();
+	static float getHalfWidth();
+	static float getHalfHeight();
 	static void setWidth( unsigned int width );
 	static void setHeight( unsigned int height );
 
