@@ -49,6 +49,8 @@ void CPP::draw()
 //--------------------------------------------------------------
 void CPP::keyPressed( int key )
 {
+	const Keys::id keyPressed = getKeyPressed( key );
+	// Connect to Input Here.
 	m_stateHandler.keyPressed( key );
 }
 
@@ -234,4 +236,434 @@ float CPP::distanceRectPoint( float pX, float pY, float rX, float rY, float rW, 
 		return distance( pX, pY, rX, rY + rH );
 	}
 	return distance( pX, pY, rX, rY );
+}
+
+Keys::id CPP::getKeyPressed( int key )
+{
+	// Abstract away Glut and openFrameworks...
+	switch ( key )
+	{
+		case OF_KEY_LEFT:
+		{
+			return Keys::CPP_LEFT;
+			break;
+		}
+		case OF_KEY_UP:
+		{
+			return Keys::CPP_UP;
+			break;
+		}
+		case OF_KEY_RIGHT:
+		{
+			return Keys::CPP_RIGHT;
+			break;
+		}
+		case OF_KEY_DOWN:
+		{
+			return Keys::CPP_DOWN;
+			break;
+		}
+		case OF_KEY_RETURN:
+		{
+			return Keys::CPP_ENTER;
+			break;
+		}
+		case ' ':
+		{
+			return Keys::CPP_SPACE;
+			break;
+		}
+		case OF_KEY_BACKSPACE:
+		{
+			return Keys::CPP_BACKSPACE;
+			break;
+		}
+		case OF_KEY_DEL:
+		{
+			return Keys::CPP_DELETE;
+			break;
+		}
+		case OF_KEY_END:
+		{
+			return Keys::CPP_END;
+			break;
+		}
+		case OF_KEY_ESC:
+		{
+			return Keys::CPP_ESCAPE;
+			break;
+		}
+		case OF_KEY_HOME:
+		{
+			return Keys::CPP_HOME;
+			break;
+		}
+		case OF_KEY_INSERT:
+		{
+			return Keys::CPP_INSERT;
+			break;
+		}
+		case '\t':
+		{
+			return Keys::CPP_TAB;
+			break;
+		}
+		case OF_KEY_PAGE_DOWN:
+		{
+			return Keys::CPP_PAGE_DOWN;
+			break;
+		}
+		case OF_KEY_PAGE_UP:
+		{
+			return Keys::CPP_PAGE_UP;
+			break;
+		}
+		case '[':
+		case '{':
+		{
+			return Keys::CPP_LEFT_SQUARE_BRACKET;
+			break;
+		}
+		case ']':
+		case '}':
+		{
+			return Keys::CPP_RIGHT_SQUARE_BRACKET;
+			break;
+		}
+		case 'a':
+		case 'A':
+		{
+			return Keys::CPP_A;
+			break;
+		}
+		case 'b':
+		case 'B':
+		{
+			return Keys::CPP_B;
+			break;
+		}
+		case 'c':
+		case 'C':
+		{
+			return Keys::CPP_C;
+			break;
+		}
+		case 'd':
+		case 'D':
+		{
+			return Keys::CPP_D;
+			break;
+		}
+		case 'e':
+		case 'E':
+		{
+			return Keys::CPP_E;
+			break;
+		}
+		case 'f':
+		case 'F':
+		{
+			return Keys::CPP_F;
+			break;
+		}
+		case 'g':
+		case 'G':
+		{
+			return Keys::CPP_G;
+			break;
+		}
+		case 'h':
+		case 'H':
+		{
+			return Keys::CPP_H;
+			break;
+		}
+		case 'i':
+		case 'I':
+		{
+			return Keys::CPP_I;
+			break;
+		}
+		case 'j':
+		case 'J':
+		{
+			return Keys::CPP_J;
+			break;
+		}
+		case 'k':
+		case 'K':
+		{
+			return Keys::CPP_K;
+			break;
+		}
+		case 'l':
+		case 'L':
+		{
+			return Keys::CPP_L;
+			break;
+		}
+		case 'm':
+		case 'M':
+		{
+			return Keys::CPP_M;
+			break;
+		}
+		case 'n':
+		case 'N':
+		{
+			return Keys::CPP_N;
+			break;
+		}
+		case 'o':
+		case 'O':
+		{
+			return Keys::CPP_O;
+			break;
+		}
+		case 'p':
+		case 'P':
+		{
+			return Keys::CPP_P;
+			break;
+		}
+		case 'q':
+		case 'Q':
+		{
+			return Keys::CPP_Q;
+			break;
+		}
+		case 'r':
+		case 'R':
+		{
+			return Keys::CPP_R;
+			break;
+		}
+		case 's':
+		case 'S':
+		{
+			return Keys::CPP_S;
+			break;
+		}
+		case 't':
+		case 'T':
+		{
+			return Keys::CPP_T;
+			break;
+		}
+		case 'u':
+		case 'U':
+		{
+			return Keys::CPP_U;
+			break;
+		}
+		case 'v':
+		case 'V':
+		{
+			return Keys::CPP_V;
+			break;
+		}
+		case 'w':
+		case 'W':
+		{
+			return Keys::CPP_W;
+			break;
+		}
+		case 'x':
+		case 'X':
+		{
+			return Keys::CPP_X;
+			break;
+		}
+		case 'y':
+		case 'Y':
+		{
+			return Keys::CPP_Y;
+			break;
+		}
+		case 'z':
+		case 'Z':
+		{
+			return Keys::CPP_Z;
+			break;
+		}
+		case OF_KEY_F1:
+		{
+			return Keys::CPP_F1;
+			break;
+		}
+		case OF_KEY_F2:
+		{
+			return Keys::CPP_F2;
+			break;
+		}
+		case OF_KEY_F3:
+		{
+			return Keys::CPP_F3;
+			break;
+		}
+		case OF_KEY_F4:
+		{
+			return Keys::CPP_F4;
+			break;
+		}
+		case OF_KEY_F5:
+		{
+			return Keys::CPP_F5;
+			break;
+		}
+		case OF_KEY_F6:
+		{
+			return Keys::CPP_F6;
+			break;
+		}
+		case OF_KEY_F7:
+		{
+			return Keys::CPP_F7;
+			break;
+		}
+		case OF_KEY_F8:
+		{
+			return Keys::CPP_F8;
+			break;
+		}
+		case OF_KEY_F9:
+		{
+			return Keys::CPP_F9;
+			break;
+		}
+		case OF_KEY_F10:
+		{
+			return Keys::CPP_F10;
+			break;
+		}
+		case OF_KEY_F11:
+		{
+			return Keys::CPP_F11;
+			break;
+		}
+		case OF_KEY_F12:
+		{
+			return Keys::CPP_F12;
+			break;
+		}
+		case '0':
+		case ')':
+		{
+			return Keys::CPP_DIGIT_0;
+			break;
+		}
+		case '1':
+		case '!':
+		{
+			return Keys::CPP_DIGIT_1;
+			break;
+		}
+		case '2':
+		case '@':
+		{
+			return Keys::CPP_DIGIT_2;
+			break;
+		}
+		case '3':
+		case '#':
+		{
+			return Keys::CPP_DIGIT_3;
+			break;
+		}
+		case '4':
+		case '$':
+		{
+			return Keys::CPP_DIGIT_4;
+			break;
+		}
+		case '5':
+		case '%':
+		{
+			return Keys::CPP_DIGIT_5;
+			break;
+		}
+		case '6':
+		case '^':
+		{
+			return Keys::CPP_DIGIT_6;
+			break;
+		}
+		case '7':
+		case '&':
+		{
+			return Keys::CPP_DIGIT_7;
+			break;
+		}
+		case '8':
+		case '*':
+		{
+			return Keys::CPP_DIGIT_8;
+			break;
+		}
+		case '9':
+		case '(':
+		{
+			return Keys::CPP_DIGIT_9;
+			break;
+		}
+		case '`':
+		case '~':
+		{
+			return Keys::CPP_GRAVE_ACCENT;
+			break;
+		}
+		case '-':
+		case '_':
+		{
+			return Keys::CPP_MINUS;
+			break;
+		}
+		case '=':
+		case '+':
+		{
+			return Keys::CPP_EQUALS;
+			break;
+		}
+		case '\\':
+		case '|':
+		{
+			return Keys::CPP_BACKSLASH;
+			break;
+		}
+		case ';':
+		case ':':
+		{
+			return Keys::CPP_SEMICOLON;
+			break;
+		}
+		case '\'':
+		case '"':
+		{
+			return Keys::CPP_SINGLE_QUOTE;
+			break;
+		}
+		case ',':
+		case '<':
+		{
+			return Keys::CPP_COMMA;
+			break;
+		}
+		case '.':
+		case '>':
+		{
+			return Keys::CPP_PERIOD;
+			break;
+		}
+		case '/':
+		case '?':
+		{
+			return Keys::CPP_SLASH;
+			break;
+		}
+		default:
+		{
+			return Keys::CPP_UNSPECIFIED;
+			break;
+		}
+	}
 }

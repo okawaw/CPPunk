@@ -1,10 +1,11 @@
-#ifndef CPP_H
-#define CPP_H
+#ifndef CPP_CPP_H_
+#define CPP_CPP_H_
 
 #include "ofBaseApp.h"
 
 #include "StateHandler.h"
 #include "BaseWorld.h"
+#include "Key.h"
 
 #include "ofCamera.h"
 
@@ -55,6 +56,8 @@ public:
 	static float distanceRectPoint( float pX, float pY, float rX, float rY, float rW, float rH );
 
 private:
+	static Keys::id getKeyPressed( int key );
+
 	static unsigned int m_width;                      // Width of the game.
 	static unsigned int m_height;                     // Height of the game.
 	static float m_halfWidth;                         // Half width of the game.

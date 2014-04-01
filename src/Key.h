@@ -1,0 +1,96 @@
+#ifndef CPP_KEY_H_
+#define CPP_KEY_H_
+
+struct Keys
+{
+	enum id
+	{
+		CPP_ANY = -1,
+
+		CPP_LEFT,
+		CPP_UP,
+		CPP_RIGHT,
+		CPP_DOWN,
+
+		CPP_ENTER,
+		CPP_SPACE,
+		CPP_BACKSPACE,
+		CPP_DELETE,
+		CPP_END,
+		CPP_ESCAPE,
+		CPP_HOME,
+		CPP_INSERT,
+		CPP_TAB,
+		CPP_PAGE_DOWN,
+		CPP_PAGE_UP,
+		CPP_LEFT_SQUARE_BRACKET,
+		CPP_RIGHT_SQUARE_BRACKET,
+
+		CPP_A,
+		CPP_B,
+		CPP_C,
+		CPP_D,
+		CPP_E,
+		CPP_F,
+		CPP_G,
+		CPP_H,
+		CPP_I,
+		CPP_J,
+		CPP_K,
+		CPP_L,
+		CPP_M,
+		CPP_N,
+		CPP_O,
+		CPP_P,
+		CPP_Q,
+		CPP_R,
+		CPP_S,
+		CPP_T,
+		CPP_U,
+		CPP_V,
+		CPP_W,
+		CPP_X,
+		CPP_Y,
+		CPP_Z,
+
+		CPP_F1,
+		CPP_F2,
+		CPP_F3,
+		CPP_F4,
+		CPP_F5,
+		CPP_F6,
+		CPP_F7,
+		CPP_F8,
+		CPP_F9,
+		CPP_F10,
+		CPP_F11,
+		CPP_F12,
+
+		CPP_DIGIT_0,
+		CPP_DIGIT_1,
+		CPP_DIGIT_2,
+		CPP_DIGIT_3,
+		CPP_DIGIT_4,
+		CPP_DIGIT_5,
+		CPP_DIGIT_6,
+		CPP_DIGIT_7,
+		CPP_DIGIT_8,
+		CPP_DIGIT_9,
+
+		CPP_GRAVE_ACCENT,
+		CPP_MINUS,
+		CPP_EQUALS,
+		CPP_BACKSLASH,
+		CPP_SEMICOLON,
+		CPP_SINGLE_QUOTE,
+		CPP_COMMA,
+		CPP_PERIOD,
+		CPP_SLASH,
+
+		CPP_UNSPECIFIED,
+
+		NUM_KEYS
+	};
+};
+
+#endif
