@@ -58,16 +58,16 @@ public:
 private:
 	static CPPKeys::id getKeyPressed( int key );
 
-	static unsigned int m_width;                      // Width of the game.
-	static unsigned int m_height;                     // Height of the game.
-	static float m_halfWidth;                         // Half width of the game.
-	static float m_halfHeight;                        // Half height of the game.
+	static unsigned int ms_width;                      // Width of the game.
+	static unsigned int ms_height;                     // Height of the game.
+	static float ms_halfWidth;                         // Half width of the game.
+	static float ms_halfHeight;                        // Half height of the game.
 
-	static unsigned int m_frameRate;                  // Desired frame rate of the game.
+	static unsigned int ms_frameRate;                  // Desired frame rate of the game.
 
-	static CPPStateHandler m_stateHandler;            // StateHandler for the game.
+	static CPPStateHandler ms_stateHandler;            // StateHandler for the game.
 
-	static ofCamera m_camera;                         // Camera for the game.
+	static ofCamera ms_camera;                         // Camera for the game.
 };
 
 #endif

@@ -6,16 +6,16 @@ static const int CAMERA_Z = 100;
 
 static const std::string VERSION = "1.0.0";       // The CPPunk major version.
 
-unsigned int CPP::m_width;                        // Width of the game.
-unsigned int CPP::m_height;                       // Height of the game.
-float CPP::m_halfWidth;                           // Half width of the game.
-float CPP::m_halfHeight;                          // Half height of the game.
+unsigned int CPP::ms_width;                       // Width of the game.
+unsigned int CPP::ms_height;                      // Height of the game.
+float CPP::ms_halfWidth;                          // Half width of the game.
+float CPP::ms_halfHeight;                         // Half height of the game.
 
-unsigned int CPP::m_frameRate;                    // Desired frame rate of the game.
+unsigned int CPP::ms_frameRate;                   // Desired frame rate of the game.
 
-CPPStateHandler CPP::m_stateHandler;                 // Static state handler.
+CPPStateHandler CPP::ms_stateHandler;             // Static state handler.
 
-ofCamera CPP::m_camera;                           // Camera for the game.
+ofCamera CPP::ms_camera;                          // Camera for the game.
 
 CPP::CPP()
 {
@@ -25,25 +25,25 @@ CPP::CPP()
 void CPP::setup()
 {
 	// Set world camera to orthographic mode.
-	m_camera.enableOrtho();
+	ms_camera.enableOrtho();
 	// Move camera's top left position to (0, 0) by default.
-	m_camera.setPosition( 0, m_height, CAMERA_Z );                            // IMPORTANT! Camera's y position must be sum of position and screen height.
+	ms_camera.setPosition( 0, ms_height, CAMERA_Z );                            // IMPORTANT! Camera's y position must be sum of position and screen height.
 	// Flip camera's y values to prevent mirroring.
-	m_camera.setScale( 1, -1, 1 );
+	ms_camera.setScale( 1, -1, 1 );
 }
 
 //--------------------------------------------------------------
 void CPP::update()
 {
-	m_stateHandler.update();
+	ms_stateHandler.update();
 }
 
 //--------------------------------------------------------------
 void CPP::draw()
 {
-	m_camera.begin();
-	m_stateHandler.draw();
-	m_camera.end();
+	ms_camera.begin();
+	ms_stateHandler.draw();
+	ms_camera.end();
 }
 
 //--------------------------------------------------------------
@@ -51,111 +51,111 @@ void CPP::keyPressed( int key )
 {
 	const CPPKeys::id keyPressed = getKeyPressed( key );
 	// Connect to Input Here.
-	m_stateHandler.keyPressed( key );
+	ms_stateHandler.keyPressed( key );
 }
 
 //--------------------------------------------------------------
 void CPP::keyReleased( int key )
 {
-	m_stateHandler.keyReleased( key );
+	ms_stateHandler.keyReleased( key );
 }
 
 //--------------------------------------------------------------
 void CPP::mouseMoved( int x, int y )
 {
-	m_stateHandler.mouseMoved( x, y );
+	ms_stateHandler.mouseMoved( x, y );
 }
 
 //--------------------------------------------------------------
 void CPP::mouseDragged( int x, int y, int button )
 {
-	m_stateHandler.mouseDragged( x, y, button );
+	ms_stateHandler.mouseDragged( x, y, button );
 }
 
 //--------------------------------------------------------------
 void CPP::mousePressed( int x, int y, int button )
 {
-	m_stateHandler.mousePressed( x, y, button );
+	ms_stateHandler.mousePressed( x, y, button );
 }
 
 //--------------------------------------------------------------
 void CPP::mouseReleased( int x, int y, int button )
 {
-	m_stateHandler.mouseReleased( x, y, button );
+	ms_stateHandler.mouseReleased( x, y, button );
 }
 
 //--------------------------------------------------------------
 void CPP::windowResized( int w, int h )
 {
 	// HACK: Somehow prevent resizing.
-	ofSetWindowShape( m_width, m_height );
+	ofSetWindowShape( ms_width, ms_height );
 
-	m_stateHandler.windowResized( w, h );
+	ms_stateHandler.windowResized( w, h );
 }
 
 //--------------------------------------------------------------
 void CPP::gotMessage( ofMessage msg )
 {
-	m_stateHandler.gotMessage( msg );
+	ms_stateHandler.gotMessage( msg );
 }
 
 //--------------------------------------------------------------
 void CPP::dragEvent( ofDragInfo dragInfo )
 { 
-	m_stateHandler.dragEvent( dragInfo );
+	ms_stateHandler.dragEvent( dragInfo );
 }
 
 void CPP::setWorld( CPPBaseWorld* newWorld )
 {
-	m_stateHandler.changeWorld( newWorld );
+	ms_stateHandler.changeWorld( newWorld );
 }
 
-unsigned int CPP::getWidth() { return m_width; }
-unsigned int CPP::getHeight() { return m_height; }
-float CPP::getHalfWidth() { return m_halfWidth; }
-float CPP::getHalfHeight() { return m_halfHeight; }
+unsigned int CPP::getWidth() { return ms_width; }
+unsigned int CPP::getHeight() { return ms_height; }
+float CPP::getHalfWidth() { return ms_halfWidth; }
+float CPP::getHalfHeight() { return ms_halfHeight; }
 
 void CPP::setWidth( unsigned int width )
 {
-	m_width = width;
-	m_halfWidth = width / 2.0;
+	ms_width = width;
+	ms_halfWidth = width / 2.0;
 }
 
 void CPP::setHeight( unsigned int height )
 {
-	m_height = height;
-	m_halfHeight = height / 2.0;
+	ms_height = height;
+	ms_halfHeight = height / 2.0;
 }
 
 void CPP::setFrameRate( unsigned int frameRate )
 {
-	m_frameRate = frameRate;
+	ms_frameRate = frameRate;
 	ofSetFrameRate( frameRate );
 }
 
 float CPP::getCameraX()
 {
-	return m_camera.getPosition().x;
+	return ms_camera.getPosition().x;
 }
 
 float CPP::getCameraY()
 {
-	return m_camera.getPosition().y - m_height;
+	return ms_camera.getPosition().y - ms_height;
 }
 
 void CPP::setCameraX( float x )
 {
-	m_camera.setPosition( x, m_camera.getPosition().y, CAMERA_Z );
+	ms_camera.setPosition( x, ms_camera.getPosition().y, CAMERA_Z );
 }
 
 void CPP::setCameraY( float y )
 {
-	m_camera.setPosition( m_camera.getPosition().x, y + m_height, CAMERA_Z );
+	ms_camera.setPosition( ms_camera.getPosition().x, y + ms_height, CAMERA_Z );
 }
 
 void CPP::setCameraPos( float x, float y )
 {
-	m_camera.setPosition( x, y + m_height, CAMERA_Z );
+	ms_camera.setPosition( x, y + ms_height, CAMERA_Z );
 }
 
 // TODO: Write squareDistance
