@@ -1,5 +1,5 @@
-#ifndef BASE_ENTITY_DEFS_H
-#define BASE_ENTITY_DEFS_H
+#ifndef CPP_BASE_ENTITY_DEFS_H
+#define CPP_BASE_ENTITY_DEFS_H
 
 struct BaseEntityTypes
 {

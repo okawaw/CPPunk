@@ -1,23 +1,23 @@
-#ifndef BASE_ENTITY_H
-#define BASE_ENTITY_H
+#ifndef CPP_BASE_ENTITY_H_
+#define CPP_BASE_ENTITY_H_
 
 #include "BaseEntityDefs.h"
 
 #include "ofImage.h"
 
-class BaseWorld;
+class CPPBaseWorld;
 
-class BaseEntity
+class CPPBaseEntity
 {
 public:
 	struct ptrCmp
 	{
-		bool operator()( const BaseEntity* left, const BaseEntity* right );
+		bool operator()( const CPPBaseEntity* left, const CPPBaseEntity* right );
 	};
 
 public:                                  // TODO: Pass a Graphic once it is implemented.
-	BaseEntity( const std::string& graphicFile = "", float x = 0, float y = 0 );
-	virtual ~BaseEntity();
+	CPPBaseEntity( const std::string& graphicFile = "", float x = 0, float y = 0 );
+	virtual ~CPPBaseEntity();
 
 	bool isVisible() const;
 	void setVisible( const bool visible );
@@ -69,30 +69,30 @@ public:                                  // TODO: Pass a Graphic once it is impl
 	virtual void added();                                       // Override this, called when the Entity is added to a World.
 	virtual void removed();                                     // Override this, called when the Entity is removed from a World.
 
-	BaseWorld* getWorld() const { return m_world; }
-	void setWorld( BaseWorld* const world ) { m_world = world; }
+	CPPBaseWorld* getWorld() const { return m_world; }
+	void setWorld( CPPBaseWorld* const world ) { m_world = world; }
 
-	BaseEntity* collide( BaseEntityTypes::id type,              // Checks for a collision against an Entity type.
+	CPPBaseEntity* collide( BaseEntityTypes::id type,           // Checks for a collision against an Entity type.
 	                     float x, float y ) const;
 
 	bool collideRect( float x, float y,                         // Checks if this Entity overlaps the specified rectangle.
 	                  float rX, float rY,
 	                  float rWidth, float rHeight ) const;
 
-	BaseEntity* collideTypes( std::vector< BaseEntityTypes::id >& types, // Checks for collision against multiple Entity types.
+	CPPBaseEntity* collideTypes( std::vector< BaseEntityTypes::id >& types, // Checks for collision against multiple Entity types.
 	                          float x, float y );
 
 	// Checks if this Entity collides with a specific Entity.
-	BaseEntity* collideWith( BaseEntity* e, float x, float y );
+	CPPBaseEntity* collideWith( CPPBaseEntity* e, float x, float y );
 
 	// Checks if this Entity overlaps the specified position.
 	bool collidePoint( float x, float y, float pX, float pY );
 
 	// Populates a vector with all collided Entities of a type.
-	void collideInto( BaseEntityTypes::id type, float x, float y, std::vector< BaseEntity* >& into );
+	void collideInto( BaseEntityTypes::id type, float x, float y, std::vector< CPPBaseEntity* >& into );
 
 	// Calculates the distance from another Entity.
-	float distanceFrom( BaseEntity* e, bool useHitboxes = false );
+	float distanceFrom( CPPBaseEntity* e, bool useHitboxes = false );
 
 	// Calculates the distance from this Entity to the point.
 	float distanceToPoint( float pX, float pY, bool useHitBox = false );
@@ -119,7 +119,7 @@ protected:
 
 	int m_layer;                                                // Layer of the Entity.
 
-	BaseWorld* m_world;                                         // World that this entity is in.
+	CPPBaseWorld* m_world;                                      // World that this entity is in.
 
 private:
 	// TODO: make Graphic class.

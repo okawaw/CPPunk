@@ -1,5 +1,5 @@
-#ifndef CPP_CPP_H_
-#define CPP_CPP_H_
+#ifndef CPP_H_
+#define CPP_H_
 
 #include "ofBaseApp.h"
 
@@ -32,7 +32,7 @@ public:
 
 
 
-	static void setWorld( BaseWorld* newWorld );
+	static void setWorld( CPPBaseWorld* newWorld );
 
 	static unsigned int getWidth();
 	static unsigned int getHeight();
@@ -56,7 +56,7 @@ public:
 	static float distanceRectPoint( float pX, float pY, float rX, float rY, float rW, float rH );
 
 private:
-	static Keys::id getKeyPressed( int key );
+	static CPPKeys::id getKeyPressed( int key );
 
 	static unsigned int m_width;                      // Width of the game.
 	static unsigned int m_height;                     // Height of the game.
@@ -65,7 +65,7 @@ private:
 
 	static unsigned int m_frameRate;                  // Desired frame rate of the game.
 
-	static StateHandler m_stateHandler;               // StateHandler for the game.
+	static CPPStateHandler m_stateHandler;            // StateHandler for the game.
 
 	static ofCamera m_camera;                         // Camera for the game.
 };

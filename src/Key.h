@@ -1,7 +1,7 @@
 #ifndef CPP_KEY_H_
 #define CPP_KEY_H_
 
-struct Keys
+struct CPPKeys
 {
 	enum id
 	{

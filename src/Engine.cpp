@@ -5,7 +5,7 @@
 #include "ofAppGlutWindow.h"
 #include "ofAppRunner.h"
 
-void Engine::init( BaseWorld* world, unsigned int width, unsigned int height, unsigned int frameRate/* = 60*/ )
+void CPPEngine::init( CPPBaseWorld* world, unsigned int width, unsigned int height, unsigned int frameRate/* = 60*/ )
 {
 	ofAppGlutWindow window;
 	ofSetupOpenGL( &window, width, height, OF_WINDOW ); // Set up the GL context

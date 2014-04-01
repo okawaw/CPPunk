@@ -1,75 +1,75 @@
 #include "BaseWorld.h"
 
-BaseWorld::BaseWorld()
+CPPBaseWorld::CPPBaseWorld()
 {
 }
 
 
-BaseWorld::~BaseWorld()
+CPPBaseWorld::~CPPBaseWorld()
 {
-	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
+	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
 		delete *i;
 	}	
 }
 
-void BaseWorld::setup()
+void CPPBaseWorld::setup()
 {
 }
 
-void BaseWorld::update()
+void CPPBaseWorld::update()
 {
-	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
+	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
 		( *i )->update();
 	}
 }
 
-void BaseWorld::draw()
+void CPPBaseWorld::draw()
 {
-	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
+	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
 		( *i )->draw();
 	}
 }
 
-void BaseWorld::keyPressed( int key )
+void CPPBaseWorld::keyPressed( int key )
 {
 }
 
-void BaseWorld::keyReleased( int key )
+void CPPBaseWorld::keyReleased( int key )
 {
 }
 
-void BaseWorld::mouseMoved( int x, int y )
+void CPPBaseWorld::mouseMoved( int x, int y )
 {
 }
 
-void BaseWorld::mouseDragged( int x, int y, int button )
+void CPPBaseWorld::mouseDragged( int x, int y, int button )
 {
 }
 
-void BaseWorld::mousePressed( int x, int y, int button )
+void CPPBaseWorld::mousePressed( int x, int y, int button )
 {
 }
 
-void BaseWorld::mouseReleased( int x, int y, int button )
+void CPPBaseWorld::mouseReleased( int x, int y, int button )
 {
 }
 
-void BaseWorld::windowResized( int w, int h )
+void CPPBaseWorld::windowResized( int w, int h )
 {
 }
 
-void BaseWorld::dragEvent( ofDragInfo dragInfo )
+void CPPBaseWorld::dragEvent( ofDragInfo dragInfo )
 {
 }
 
-void BaseWorld::gotMessage( ofMessage msg )
+void CPPBaseWorld::gotMessage( ofMessage msg )
 {
 }
 
-void BaseWorld::addEntity( BaseEntity* entity, bool quiet/* = false*/ )
+void CPPBaseWorld::addEntity( CPPBaseEntity* entity, bool quiet/* = false*/ )
 {
 	if ( m_entities.insert( entity ).second == false )
 	{
@@ -85,7 +85,7 @@ void BaseWorld::addEntity( BaseEntity* entity, bool quiet/* = false*/ )
 	}
 }
 
-BaseEntity* BaseWorld::removeEntity( BaseEntity* entity, bool quiet/* = false*/ )
+CPPBaseEntity* CPPBaseWorld::removeEntity( CPPBaseEntity* entity, bool quiet/* = false*/ )
 {
 	if ( m_entities.erase( entity ) != 1 )
 	{
@@ -103,7 +103,7 @@ BaseEntity* BaseWorld::removeEntity( BaseEntity* entity, bool quiet/* = false*/ 
 	return entity;
 }
 
-void BaseWorld::updateEntityLayer( BaseEntity* entity, int layer )
+void CPPBaseWorld::updateEntityLayer( CPPBaseEntity* entity, int layer )
 {
 	if ( m_entities.erase( entity ) != 1 )
 	{
@@ -117,11 +117,11 @@ void BaseWorld::updateEntityLayer( BaseEntity* entity, int layer )
 	m_entities.insert( entity );
 }
 
-BaseEntity* BaseWorld::collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, const BaseEntity* except/* = NULL*/ ) const
+CPPBaseEntity* CPPBaseWorld::collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, const CPPBaseEntity* except/* = NULL*/ ) const
 {
-	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
+	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
-		BaseEntity* const e = ( *i );
+		CPPBaseEntity* const e = ( *i );
 
 		if ( e->getType() == type )
 		{
@@ -144,11 +144,11 @@ BaseEntity* BaseWorld::collideRect( BaseEntityTypes::id type, float rX, float rY
 	return NULL;
 }
 
-void BaseWorld::collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* >& into, const BaseEntity* except/* = NULL*/ ) const
+void CPPBaseWorld::collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< CPPBaseEntity* >& into, const CPPBaseEntity* except/* = NULL*/ ) const
 {
-	for ( std::set< BaseEntity*, BaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
+	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
-		BaseEntity* const e = ( *i );
+		CPPBaseEntity* const e = ( *i );
 
 		if ( e->getType() == type )
 		{

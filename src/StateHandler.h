@@ -1,5 +1,5 @@
-#ifndef STATE_HANDLER_H
-#define STATE_HANDLER_H
+#ifndef CPP_STATE_HANDLER_H_
+#define CPP_STATE_HANDLER_H_
 
 #include "BaseWorld.h"
 //#include "GameState.h"
@@ -7,14 +7,14 @@
 
 #include "ofEvents.h"
 
-class StateHandler
+class CPPStateHandler
 {
 public:
-	StateHandler();
-	~StateHandler();
+	CPPStateHandler();
+	~CPPStateHandler();
 
 	// changes state and frees memory
-	void changeWorld( BaseWorld* newWorld );
+	void changeWorld( CPPBaseWorld* newWorld );
 
 	// Callback functions
 	void setup();
@@ -33,7 +33,7 @@ public:
 
 private:
 	// current world object pointer
-	/*static*/ BaseWorld* m_pCurWorld;
+	/*static*/ CPPBaseWorld* m_pCurWorld;
 };
 
 #endif

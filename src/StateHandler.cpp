@@ -5,20 +5,20 @@
 //#include "GameState.h"
 //#include "TitleState.h"
 
-StateHandler::StateHandler() :
+CPPStateHandler::CPPStateHandler() :
   m_pCurWorld( 0 )
 {
 	// title World is first World to load
 	//m_pCurState = new TitleState();
 }
 
-StateHandler::~StateHandler()
+CPPStateHandler::~CPPStateHandler()
 {
 	delete m_pCurWorld;
 }
 
 // Changes World to a brand new object.
-void StateHandler::changeWorld( BaseWorld* newWorld )
+void CPPStateHandler::changeWorld( CPPBaseWorld* newWorld )
 {
 	delete m_pCurWorld;
 	m_pCurWorld = newWorld;
@@ -28,11 +28,11 @@ void StateHandler::changeWorld( BaseWorld* newWorld )
 // All callbacks.
 
 // TODO: Not necessary?
-void StateHandler::setup()
+void CPPStateHandler::setup()
 {
 }
 
-void StateHandler::update()
+void CPPStateHandler::update()
 {
 	// game state update loop
 	if ( m_pCurWorld )
@@ -41,7 +41,7 @@ void StateHandler::update()
 	}
 }
 
-void StateHandler::draw()
+void CPPStateHandler::draw()
 {
 	if ( m_pCurWorld )
 	{
@@ -49,7 +49,7 @@ void StateHandler::draw()
 	}
 }
 
-void StateHandler::keyPressed( int key )
+void CPPStateHandler::keyPressed( int key )
 {
 	if ( m_pCurWorld )
 	{
@@ -57,7 +57,7 @@ void StateHandler::keyPressed( int key )
 	}
 }
 
-void StateHandler::keyReleased( int key )
+void CPPStateHandler::keyReleased( int key )
 {
 	if ( m_pCurWorld )
 	{
@@ -65,7 +65,7 @@ void StateHandler::keyReleased( int key )
 	}
 }
 
-void StateHandler::mouseMoved( int x, int y )
+void CPPStateHandler::mouseMoved( int x, int y )
 {
 	if ( m_pCurWorld )
 	{
@@ -73,7 +73,7 @@ void StateHandler::mouseMoved( int x, int y )
 	}
 }
 
-void StateHandler::mouseDragged( int x, int y, int button )
+void CPPStateHandler::mouseDragged( int x, int y, int button )
 {
 	if ( m_pCurWorld )
 	{
@@ -81,7 +81,7 @@ void StateHandler::mouseDragged( int x, int y, int button )
 	}
 }
 
-void StateHandler::mousePressed( int x, int y, int button )
+void CPPStateHandler::mousePressed( int x, int y, int button )
 {
 	if ( m_pCurWorld )
 	{
@@ -89,7 +89,7 @@ void StateHandler::mousePressed( int x, int y, int button )
 	}
 }
 
-void StateHandler::mouseReleased( int x, int y, int button )
+void CPPStateHandler::mouseReleased( int x, int y, int button )
 {
 	if ( m_pCurWorld )
 	{
@@ -97,7 +97,7 @@ void StateHandler::mouseReleased( int x, int y, int button )
 	}
 }
 
-void StateHandler::windowResized( int w, int h )
+void CPPStateHandler::windowResized( int w, int h )
 {
 	if ( m_pCurWorld )
 	{
@@ -105,7 +105,7 @@ void StateHandler::windowResized( int w, int h )
 	}
 }
 
-void StateHandler::dragEvent( ofDragInfo dragInfo )
+void CPPStateHandler::dragEvent( ofDragInfo dragInfo )
 {
 	if ( m_pCurWorld )
 	{
@@ -113,7 +113,7 @@ void StateHandler::dragEvent( ofDragInfo dragInfo )
 	}
 }
 
-void StateHandler::gotMessage( ofMessage msg )
+void CPPStateHandler::gotMessage( ofMessage msg )
 {
 	if ( m_pCurWorld )
 	{

@@ -1,5 +1,5 @@
-#ifndef BASE_WORLD_H
-#define BASE_WORLD_H
+#ifndef CPP_BASE_WORLD_H_
+#define CPP_BASE_WORLD_H_
 
 #include "BaseEntity.h"
 #include "BaseEntityDefs.h"
@@ -8,11 +8,11 @@
 
 #include "ofEvents.h"
 
-class BaseWorld
+class CPPBaseWorld
 {
 public:
-	BaseWorld();
-	virtual ~BaseWorld();
+	CPPBaseWorld();
+	virtual ~CPPBaseWorld();
 
 	// virtual functions called by StateHandler
 	virtual void setup();
@@ -29,15 +29,15 @@ public:
 	virtual void dragEvent( ofDragInfo dragInfo );
 	virtual void gotMessage( ofMessage msg );
 
-	void addEntity( BaseEntity* entity, bool quiet = false );
-	BaseEntity* removeEntity( BaseEntity* entity, bool quiet = false );
-	void updateEntityLayer( BaseEntity* entity, int layer );
+	void addEntity( CPPBaseEntity* entity, bool quiet = false );
+	CPPBaseEntity* removeEntity( CPPBaseEntity* entity, bool quiet = false );
+	void updateEntityLayer( CPPBaseEntity* entity, int layer );
 
-	BaseEntity* collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, const BaseEntity* except = NULL ) const;
-	void collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< BaseEntity* >& into, const BaseEntity* except = NULL ) const;
+	CPPBaseEntity* collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, const CPPBaseEntity* except = NULL ) const;
+	void collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< CPPBaseEntity* >& into, const CPPBaseEntity* except = NULL ) const;
 
 private:
-	std::set< BaseEntity*, BaseEntity::ptrCmp > m_entities;
+	std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp > m_entities;
 };
 
 #endif
