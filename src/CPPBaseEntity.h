@@ -1,8 +1,6 @@
 #ifndef CPP_BASE_ENTITY_H_
 #define CPP_BASE_ENTITY_H_
 
-#include "BaseEntityDefs.h"
-
 #include "ofImage.h"
 
 class CPPBaseWorld;
@@ -43,8 +41,8 @@ public:                                  // TODO: Pass a Graphic once it is impl
 	void setOriginY( const int y );
 	void centerOrigin();
 
-	BaseEntityTypes::id getType() const;
-	void setType( const BaseEntityTypes::id type );
+	unsigned int getType() const;
+	void setType( const unsigned int type );
 
 	float getCenterX() const;
 	float getCenterY() const;
@@ -72,14 +70,14 @@ public:                                  // TODO: Pass a Graphic once it is impl
 	CPPBaseWorld* getWorld() const { return m_world; }
 	void setWorld( CPPBaseWorld* const world ) { m_world = world; }
 
-	CPPBaseEntity* collide( BaseEntityTypes::id type,           // Checks for a collision against an Entity type.
+	CPPBaseEntity* collide( unsigned int type,           // Checks for a collision against an Entity type.
 	                     float x, float y ) const;
 
 	bool collideRect( float x, float y,                         // Checks if this Entity overlaps the specified rectangle.
 	                  float rX, float rY,
 	                  float rWidth, float rHeight ) const;
 
-	CPPBaseEntity* collideTypes( std::vector< BaseEntityTypes::id >& types, // Checks for collision against multiple Entity types.
+	CPPBaseEntity* collideTypes( std::vector< unsigned int >& types, // Checks for collision against multiple Entity types.
 	                          float x, float y );
 
 	// Checks if this Entity collides with a specific Entity.
@@ -89,7 +87,7 @@ public:                                  // TODO: Pass a Graphic once it is impl
 	bool collidePoint( float x, float y, float pX, float pY );
 
 	// Populates a vector with all collided Entities of a type.
-	void collideInto( BaseEntityTypes::id type, float x, float y, std::vector< CPPBaseEntity* >& into );
+	void collideInto( unsigned int type, float x, float y, std::vector< CPPBaseEntity* >& into );
 
 	// Calculates the distance from another Entity.
 	float distanceFrom( CPPBaseEntity* e, bool useHitboxes = false );
@@ -115,7 +113,7 @@ protected:
 	int m_originX;                                              // X origin of the Entity's hitbox.
 	int m_originY;                                              // Y origin of the Entity's hitbox.
 
-	BaseEntityTypes::id m_type;                                 // Type of the Entity.
+	unsigned int m_type;                                        // Type of the Entity.
 
 	int m_layer;                                                // Layer of the Entity.
 

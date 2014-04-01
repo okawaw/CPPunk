@@ -20,7 +20,7 @@ CPPBaseEntity::CPPBaseEntity( const std::string& graphicFile/* = ""*/, float x/*
 , m_height( 0 )
 , m_originX( 0 )
 , m_originY( 0 )
-, m_type( BaseEntityTypes::LAST_TYPE )
+, m_type( 0 )
 , m_layer( 0 )
 , m_world( NULL )
 {
@@ -65,8 +65,8 @@ void CPPBaseEntity::setOriginX( const int x ) { m_originX = x; }
 void CPPBaseEntity::setOriginY( const int y ) { m_originY = y; }
 void CPPBaseEntity::centerOrigin() { m_originX = ( ( float )m_width / 2.0 ); m_originY = ( ( float )m_height / 2.0 ); }
 
-BaseEntityTypes::id CPPBaseEntity::getType() const { return m_type; }
-void CPPBaseEntity::setType( const BaseEntityTypes::id type ) { m_type = type; }
+unsigned int CPPBaseEntity::getType() const { return m_type; }
+void CPPBaseEntity::setType( const unsigned int type ) { m_type = type; }
 
 float CPPBaseEntity::getCenterX() const { return m_posX - m_originX + ( ( float )m_width / 2.0 ); }
 float CPPBaseEntity::getCenterY() const { return m_posY - m_originY + ( ( float )m_height / 2.0 ); }
@@ -168,7 +168,7 @@ void CPPBaseEntity::removed()
 {
 }
 
-CPPBaseEntity* CPPBaseEntity::collide( BaseEntityTypes::id type, float x, float y ) const
+CPPBaseEntity* CPPBaseEntity::collide( unsigned int type, float x, float y ) const
 {
 	if ( !m_world )
 	{
@@ -184,7 +184,7 @@ bool CPPBaseEntity::collideRect( float x, float y, float rX, float rY, float rWi
 	         && x - m_originX <= rX + rWidth && y - m_originY <= rY + rHeight );
 }
 
-CPPBaseEntity* CPPBaseEntity::collideTypes( vector< BaseEntityTypes::id >& types, float x, float y )
+CPPBaseEntity* CPPBaseEntity::collideTypes( vector< unsigned int >& types, float x, float y )
 {
 	if ( !m_world )
 	{
@@ -224,7 +224,7 @@ bool CPPBaseEntity::collidePoint( float x, float y, float pX, float pY )
 	         && pX < x - m_originX + m_width && pY < y - m_originY + m_height );
 }
 
-void CPPBaseEntity::collideInto( BaseEntityTypes::id type, float x, float y, std::vector< CPPBaseEntity* >& into )
+void CPPBaseEntity::collideInto( unsigned int type, float x, float y, std::vector< CPPBaseEntity* >& into )
 {
 	if ( !m_world )
 	{

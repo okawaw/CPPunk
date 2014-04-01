@@ -117,7 +117,7 @@ void CPPBaseWorld::updateEntityLayer( CPPBaseEntity* entity, int layer )
 	m_entities.insert( entity );
 }
 
-CPPBaseEntity* CPPBaseWorld::collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, const CPPBaseEntity* except/* = NULL*/ ) const
+CPPBaseEntity* CPPBaseWorld::collideRect( unsigned int type, float rX, float rY, float rWidth, float rHeight, const CPPBaseEntity* except/* = NULL*/ ) const
 {
 	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
@@ -144,7 +144,7 @@ CPPBaseEntity* CPPBaseWorld::collideRect( BaseEntityTypes::id type, float rX, fl
 	return NULL;
 }
 
-void CPPBaseWorld::collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< CPPBaseEntity* >& into, const CPPBaseEntity* except/* = NULL*/ ) const
+void CPPBaseWorld::collideRectInto( unsigned int type, float rX, float rY, float rWidth, float rHeight, std::vector< CPPBaseEntity* >& into, const CPPBaseEntity* except/* = NULL*/ ) const
 {
 	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{

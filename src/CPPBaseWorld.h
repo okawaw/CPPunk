@@ -2,7 +2,6 @@
 #define CPP_BASE_WORLD_H_
 
 #include "CPPBaseEntity.h"
-#include "BaseEntityDefs.h"
 
 #include <set>
 
@@ -33,8 +32,8 @@ public:
 	CPPBaseEntity* removeEntity( CPPBaseEntity* entity, bool quiet = false );
 	void updateEntityLayer( CPPBaseEntity* entity, int layer );
 
-	CPPBaseEntity* collideRect( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, const CPPBaseEntity* except = NULL ) const;
-	void collideRectInto( BaseEntityTypes::id type, float rX, float rY, float rWidth, float rHeight, std::vector< CPPBaseEntity* >& into, const CPPBaseEntity* except = NULL ) const;
+	CPPBaseEntity* collideRect( unsigned int type, float rX, float rY, float rWidth, float rHeight, const CPPBaseEntity* except = NULL ) const;
+	void collideRectInto( unsigned int type, float rX, float rY, float rWidth, float rHeight, std::vector< CPPBaseEntity* >& into, const CPPBaseEntity* except = NULL ) const;
 
 private:
 	std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp > m_entities;
