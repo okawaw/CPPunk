@@ -1,6 +1,6 @@
-#include "BaseEntity.h"
+#include "CPPBaseEntity.h"
 
-#include "BaseWorld.h"
+#include "CPPBaseWorld.h"
 #include "CPP.h"
 
 #include <math.h>

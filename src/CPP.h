@@ -3,9 +3,9 @@
 
 #include "ofBaseApp.h"
 
-#include "StateHandler.h"
-#include "BaseWorld.h"
-#include "Key.h"
+#include "CPPStateHandler.h"
+#include "CPPBaseWorld.h"
+#include "CPPKey.h"
 
 #include "ofCamera.h"
 

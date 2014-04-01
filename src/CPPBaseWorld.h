@@ -1,7 +1,7 @@
 #ifndef CPP_BASE_WORLD_H_
 #define CPP_BASE_WORLD_H_
 
-#include "BaseEntity.h"
+#include "CPPBaseEntity.h"
 #include "BaseEntityDefs.h"
 
 #include <set>
