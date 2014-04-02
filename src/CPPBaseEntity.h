@@ -107,13 +107,29 @@ public:                                  // TODO: Pass a Graphic once it is impl
 	// Moves the entity by the amount, retaining integer values for its x and y. Vector of solid types.
 	void moveBy( float x, float y, const std::vector< unsigned int >& solidTypes, bool sweep = false );
 
+	// Moves the Entity to the position, retaining integer values for its x and y. One solid type.
+	void moveTo( float x, float y, bool useSolidType = false, unsigned int solidType = 0, bool sweep = false );
+
+	// Moves the Entity to the position, retaining integer values for its x and y. Vector of solid types.
+	void moveTo( float x, float y, const std::vector< unsigned int >& solidTypes, bool sweep = false );
+
+	// Moves towards the target position, retaining integer values for its x and y. One solid type.
+	void moveTowards( float x, float y, float amount, bool useSolidType = false, unsigned int solidType = 0, bool sweep = false );
+
+	// Moves towards the target position, retaining integer values for its x and y. Vector of solid types.
+	void moveTowards( float x, float y, float amount, const std::vector< unsigned int >& solidTypes, bool sweep = false );
+
+	// Clamps the Entity's hitbox on the x-axis.
+	void clampHorizontal( float left, float right, float padding = 0 );
+
+	// Clamps the Entity's hitbox on the y-axis.
+	void clampVertical( float top, float bottom, float padding = 0 );
+
 	// Optional callback for a collision in moveBy
 	virtual void moveCollideX( CPPBaseEntity* e );
 
 	// Optional callback for a collision in moveBy
 	virtual void moveCollideY( CPPBaseEntity* e );
-
-
 
 protected:
 	bool m_bVisible;                                            // If the Entity should render.

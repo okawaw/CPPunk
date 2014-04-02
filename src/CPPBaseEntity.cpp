@@ -396,6 +396,60 @@ void CPPBaseEntity::moveBy( float x, float y, const std::vector< unsigned int >&
 	}
 }
 
+void CPPBaseEntity::moveTo( float x, float y, bool useSolidType/* = false*/, unsigned int solidType/* = 0*/, bool sweep/* = false*/ )
+{
+	moveBy( x - m_posX, y - m_posY, useSolidType, solidType, sweep );
+}
+
+void CPPBaseEntity::moveTo( float x, float y, const std::vector< unsigned int >& solidTypes, bool sweep/* = false*/ )
+{
+	moveBy( x - m_posX, y - m_posY, solidTypes, sweep );
+}
+
+void CPPBaseEntity::moveTowards( float x, float y, float amount, bool useSolidType/* = false*/, unsigned int solidType/* = 0*/, bool sweep/* = false*/ )
+{
+	const float xMovement = x - m_posX;
+	const float yMovement = y - m_posY;
+
+	const float distance = sqrt( ( xMovement * xMovement ) + ( yMovement * yMovement ) );
+
+	moveBy( ( xMovement / distance ), ( yMovement / distance ), useSolidType, solidType, sweep );
+}
+
+void CPPBaseEntity::moveTowards( float x, float y, float amount, const std::vector< unsigned int >& solidTypes, bool sweep/* = false*/ )
+{
+	const float xMovement = x - m_posX;
+	const float yMovement = y - m_posY;
+
+	const float distance = sqrt( ( xMovement * xMovement ) + ( yMovement * yMovement ) );
+
+	moveBy( ( xMovement / distance ), ( yMovement / distance ), solidTypes, sweep );
+}
+
+void CPPBaseEntity::clampHorizontal( float left, float right, float padding/* = 0*/ )
+{
+	if ( m_posX - m_originX < left + padding )
+	{
+		m_posX = left + m_originX + padding;
+	}
+	if ( m_posX - m_originX + m_width > right - padding )
+	{
+		m_posX = right - m_width + m_originX - padding;
+	}
+}
+
+void CPPBaseEntity::clampVertical( float top, float bottom, float padding/* = 0*/ )
+{
+	if ( m_posY - m_originY < top + padding )
+	{
+		m_posY = top + m_originY + padding;
+	}
+	if ( m_posY - m_originY + m_height > bottom - padding )
+	{
+		m_posY = bottom - m_height + m_originY - padding;
+	}
+}
+
 void CPPBaseEntity::moveCollideX( CPPBaseEntity* e )
 {
 }
