@@ -52,6 +52,9 @@ public:                                  // TODO: Pass a Graphic once it is impl
 	float getTop() const;
 	float getBottom() const;
 
+	CPPBaseWorld* getWorld() const;
+	void setWorld( CPPBaseWorld* const world );
+
 	int getLayer() const;
 	void setLayer( const int layer );
 
@@ -61,42 +64,54 @@ public:                                  // TODO: Pass a Graphic once it is impl
 
 	void setGraphic( const std::string& file );
 
-	virtual void update();                                      // Updates the Entity.
-	virtual void draw();                                        // Draws the Entity.
+	// Updates the Entity.
+	virtual void update();
+	// Draws the Entity.
+	virtual void draw();
 
-	virtual void added();                                       // Override this, called when the Entity is added to a World.
-	virtual void removed();                                     // Override this, called when the Entity is removed from a World.
+	// Override this, called when the Entity is added to a World.
+	virtual void added();
+	// Override this, called when the Entity is removed from a World.
+	virtual void removed();
 
-	CPPBaseWorld* getWorld() const { return m_world; }
-	void setWorld( CPPBaseWorld* const world ) { m_world = world; }
+	// Checks for a collision against an Entity type.
+	CPPBaseEntity* collide( unsigned int type, float x, float y ) const;
 
-	CPPBaseEntity* collide( unsigned int type,           // Checks for a collision against an Entity type.
-	                     float x, float y ) const;
+	// Checks if this Entity overlaps the specified rectangle.
+	bool collideRect( float x, float y, float rX, float rY, float rWidth, float rHeight ) const;
 
-	bool collideRect( float x, float y,                         // Checks if this Entity overlaps the specified rectangle.
-	                  float rX, float rY,
-	                  float rWidth, float rHeight ) const;
-
-	CPPBaseEntity* collideTypes( std::vector< unsigned int >& types, // Checks for collision against multiple Entity types.
-	                          float x, float y );
+	// Checks for collision against multiple Entity types.
+	CPPBaseEntity* collideTypes( const std::vector< unsigned int >& types, float x, float y ) const;
 
 	// Checks if this Entity collides with a specific Entity.
-	CPPBaseEntity* collideWith( CPPBaseEntity* e, float x, float y );
+	CPPBaseEntity* collideWith( CPPBaseEntity* e, float x, float y ) const;
 
 	// Checks if this Entity overlaps the specified position.
-	bool collidePoint( float x, float y, float pX, float pY );
+	bool collidePoint( float x, float y, float pX, float pY ) const;
 
 	// Populates a vector with all collided Entities of a type.
-	void collideInto( unsigned int type, float x, float y, std::vector< CPPBaseEntity* >& into );
+	void collideInto( unsigned int type, float x, float y, std::vector< CPPBaseEntity* >& into ) const;
 
 	// Calculates the distance from another Entity.
-	float distanceFrom( CPPBaseEntity* e, bool useHitboxes = false );
+	float distanceFrom( CPPBaseEntity* e, bool useHitboxes = false ) const;
 
 	// Calculates the distance from this Entity to the point.
-	float distanceToPoint( float pX, float pY, bool useHitBox = false );
+	float distanceToPoint( float pX, float pY, bool useHitBox = false ) const;
 
 	// Calculates the distance from this Entity to the Rectangle.
-	float distanceToRectangle( float rX, float rY, float rWidth, float rHeight );
+	float distanceToRect( float rX, float rY, float rWidth, float rHeight ) const;
+
+	// Moves the entity by the amount, retaining integer values for its x and y. One solid type.
+	void moveBy( float x, float y, bool useSolidType = false, unsigned int solidType = 0, bool sweep = false );
+
+	// Moves the entity by the amount, retaining integer values for its x and y. Vector of solid types.
+	void moveBy( float x, float y, const std::vector< unsigned int >& solidTypes, bool sweep = false );
+
+	// Optional callback for a collision in moveBy
+	virtual void moveCollideX( CPPBaseEntity* e );
+
+	// Optional callback for a collision in moveBy
+	virtual void moveCollideY( CPPBaseEntity* e );
 
 
 
@@ -122,6 +137,9 @@ protected:
 private:
 	// TODO: make Graphic class.
 	ofImage m_graphic;                                          // Graphic used when drawing the Entity.
+
+	float _moveX;
+	float _moveY;
 };
 
 #endif

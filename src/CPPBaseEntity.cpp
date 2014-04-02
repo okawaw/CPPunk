@@ -23,6 +23,8 @@ CPPBaseEntity::CPPBaseEntity( const std::string& graphicFile/* = ""*/, float x/*
 , m_type( 0 )
 , m_layer( 0 )
 , m_world( NULL )
+, _moveX( 0 )
+, _moveY( 0 )
 {
 	if ( graphicFile.length() != 0 )
 	{
@@ -76,6 +78,9 @@ float CPPBaseEntity::getRight() const { return m_posX - m_originX + m_width; }
 float CPPBaseEntity::getTop() const { return m_posY - m_originY; }
 float CPPBaseEntity::getBottom() const { return m_posY - m_originY + m_height; }
 
+CPPBaseWorld* CPPBaseEntity::getWorld() const { return m_world; }
+void CPPBaseEntity::setWorld( CPPBaseWorld* const world ) { m_world = world; }
+
 int CPPBaseEntity::getLayer() const { return m_layer; }
 void CPPBaseEntity::setLayer( const int layer )
 {	
@@ -119,7 +124,7 @@ void CPPBaseEntity::update()
 {
 }
 
-void CPPBaseEntity::draw() // TODO: Use layer.
+void CPPBaseEntity::draw()
 {
 #ifdef DEBUG_MODE
 	ofSetColor(255,255,255);
@@ -184,7 +189,7 @@ bool CPPBaseEntity::collideRect( float x, float y, float rX, float rY, float rWi
 	         && x - m_originX <= rX + rWidth && y - m_originY <= rY + rHeight );
 }
 
-CPPBaseEntity* CPPBaseEntity::collideTypes( vector< unsigned int >& types, float x, float y )
+CPPBaseEntity* CPPBaseEntity::collideTypes( const vector< unsigned int >& types, float x, float y ) const
 {
 	if ( !m_world )
 	{
@@ -204,7 +209,7 @@ CPPBaseEntity* CPPBaseEntity::collideTypes( vector< unsigned int >& types, float
 	return NULL;
 }
 
-CPPBaseEntity* CPPBaseEntity::collideWith( CPPBaseEntity* e, float x, float y )
+CPPBaseEntity* CPPBaseEntity::collideWith( CPPBaseEntity* e, float x, float y ) const
 {
 	if (    e->m_bCollidable
 	     && x - m_originX + m_width > e->m_posX - e->m_originX
@@ -218,13 +223,13 @@ CPPBaseEntity* CPPBaseEntity::collideWith( CPPBaseEntity* e, float x, float y )
 	return NULL;
 }
 
-bool CPPBaseEntity::collidePoint( float x, float y, float pX, float pY )
+bool CPPBaseEntity::collidePoint( float x, float y, float pX, float pY ) const
 {
 	return (    pX >= x - m_originX && pY >= y - m_originY
 	         && pX < x - m_originX + m_width && pY < y - m_originY + m_height );
 }
 
-void CPPBaseEntity::collideInto( unsigned int type, float x, float y, std::vector< CPPBaseEntity* >& into )
+void CPPBaseEntity::collideInto( unsigned int type, float x, float y, std::vector< CPPBaseEntity* >& into ) const
 {
 	if ( !m_world )
 	{
@@ -234,7 +239,7 @@ void CPPBaseEntity::collideInto( unsigned int type, float x, float y, std::vecto
 	m_world->collideRectInto( type, x - m_originX, y - m_originY, m_width, m_height, into, this );
 }
 
-float CPPBaseEntity::distanceFrom( CPPBaseEntity* e, bool useHitboxes/* = false*/ )
+float CPPBaseEntity::distanceFrom( CPPBaseEntity* e, bool useHitboxes/* = false*/ ) const
 {
 	if ( !useHitboxes )
 	{
@@ -244,7 +249,7 @@ float CPPBaseEntity::distanceFrom( CPPBaseEntity* e, bool useHitboxes/* = false*
 	return CPP::distanceRects( m_posX - m_originX, m_posY - m_originY, m_width, m_height, e->m_posX - e->m_originX, e->m_posY - e->m_originY, e->m_width, e->m_height );
 }
 
-float CPPBaseEntity::distanceToPoint( float pX, float pY, bool useHitBox/* = false*/ )
+float CPPBaseEntity::distanceToPoint( float pX, float pY, bool useHitBox/* = false*/ ) const
 {
 	if ( !useHitBox )
 	{
@@ -254,7 +259,147 @@ float CPPBaseEntity::distanceToPoint( float pX, float pY, bool useHitBox/* = fal
 	return CPP::distanceRectPoint( pX, pY, m_posX - m_originX, m_posY - m_originY, m_width, m_height );
 }
 
-float CPPBaseEntity::distanceToRectangle( float rX, float rY, float rWidth, float rHeight )
+float CPPBaseEntity::distanceToRect( float rX, float rY, float rWidth, float rHeight ) const
 {
 	return CPP::distanceRects( rX, rY, rWidth, rHeight, m_posX - m_originX, m_posY - m_originY, m_width, m_height);
+}
+
+void CPPBaseEntity::moveBy( float x, float y, bool useSolidType/* = false*/, unsigned int solidType/* = 0*/, bool sweep/* = false*/ )
+{
+	_moveX += x;
+	_moveY += y;
+	x = floor( _moveX + 0.5 );
+	y = floor( _moveY + 0.5 );
+	_moveX -= x;
+	_moveY -= y;
+
+	if ( useSolidType )
+	{
+		int sign;
+		CPPBaseEntity* e;
+
+		if ( x != 0 )
+		{
+			if ( sweep || collide( solidType, m_posX + x, m_posY ) )
+			{
+				sign = ( x > 0 ) ? 1 : -1;
+				while ( x != 0 )
+				{
+					if ( ( e = collide( solidType, m_posX + sign, m_posY ) ) )
+					{
+						moveCollideX( e );
+						break;
+					}
+					else
+					{
+						m_posX += sign;
+					}
+					x -= sign;
+				}
+			}
+			else
+			{
+				m_posX += x;
+			}
+		}
+		if ( y != 0 )
+		{
+			if ( sweep || collide( solidType, m_posX, m_posY + y ) )
+			{
+				sign = ( y > 0 ) ? 1 : -1;
+				while ( y != 0 )
+				{
+					if ( ( e = collide( solidType, m_posX, m_posY + sign ) ) )
+					{
+						moveCollideY( e );
+						break;
+					}
+					else
+					{
+						m_posY += sign;
+					}
+					y -= sign;
+				}
+			}
+			else
+			{
+				m_posY += y;
+			}
+		}
+	}
+	else
+	{
+		m_posX += x;
+		m_posY += y;
+	}
+}
+
+void CPPBaseEntity::moveBy( float x, float y, const std::vector< unsigned int >& solidTypes, bool sweep/* = false*/ )
+{
+	_moveX += x;
+	_moveY += y;
+	x = floor( _moveX + 0.5 );
+	y = floor( _moveY + 0.5 );
+	_moveX -= x;
+	_moveY -= y;
+
+	int sign;
+	CPPBaseEntity* e;
+
+	if ( x != 0 )
+	{
+		if ( sweep || collideTypes( solidTypes, m_posX + x, m_posY ) )
+		{
+			sign = ( x > 0 ) ? 1 : -1;
+			while ( x != 0 )
+			{
+				if ( ( e = collideTypes( solidTypes, m_posX + sign, m_posY ) ) )
+				{
+					moveCollideX( e );
+					break;
+				}
+				else
+				{
+					m_posX += sign;
+				}
+				x -= sign;
+			}
+		}
+		else
+		{
+			m_posX += x;
+		}
+	}
+	if ( y != 0 )
+	{
+		if ( sweep || collideTypes( solidTypes, m_posX, m_posY + y ) )
+		{
+			sign = ( y > 0 ) ? 1 : -1;
+			while ( y != 0 )
+			{
+				if ( ( e = collideTypes( solidTypes, m_posX, m_posY + sign ) ) )
+				{
+					moveCollideY( e );
+					break;
+				}
+				else
+				{
+					m_posY += sign;
+				}
+				y -= sign;
+			}
+		}
+		else
+		{
+			m_posY += y;
+		}
+	}
+}
+
+void CPPBaseEntity::moveCollideX( CPPBaseEntity* e )
+{
+}
+
+void CPPBaseEntity::moveCollideY( CPPBaseEntity* e )
+{
 }
