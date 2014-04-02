@@ -5,7 +5,7 @@
 
 #include "CPPStateHandler.h"
 #include "CPPBaseWorld.h"
-#include "CPPKey.h"
+#include "utils/CPPKey.h"
 
 #include "ofCamera.h"
 

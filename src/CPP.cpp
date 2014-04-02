@@ -1,6 +1,6 @@
 #include "CPP.h"
 
-#include "CPPInput.h"
+#include "utils/CPPInput.h"
 
 #include "ofAppRunner.h"
 
