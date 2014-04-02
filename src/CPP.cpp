@@ -1,5 +1,7 @@
 #include "CPP.h"
 
+#include "CPPInput.h"
+
 #include "ofAppRunner.h"
 
 static const int CAMERA_Z = 100;
@@ -36,6 +38,7 @@ void CPP::setup()
 void CPP::update()
 {
 	ms_stateHandler.update();
+	CPPInput::update();
 }
 
 //--------------------------------------------------------------
@@ -49,14 +52,16 @@ void CPP::draw()
 //--------------------------------------------------------------
 void CPP::keyPressed( int key )
 {
-	const CPPKeys::id keyPressed = getKeyPressed( key );
-	// Connect to Input Here.
+	const CPPKeys::id keyPressed = getKeyID( key );
+	CPPInput::onKeyDown( keyPressed );
 	ms_stateHandler.keyPressed( key );
 }
 
 //--------------------------------------------------------------
 void CPP::keyReleased( int key )
 {
+	const CPPKeys::id keyReleased = getKeyID( key );
+	CPPInput::onKeyUp( keyReleased );
 	ms_stateHandler.keyReleased( key );
 }
 
@@ -238,7 +243,7 @@ float CPP::distanceRectPoint( float pX, float pY, float rX, float rY, float rW, 
 	return distance( pX, pY, rX, rY );
 }
 
-CPPKeys::id CPP::getKeyPressed( int key )
+CPPKeys::id CPP::getKeyID( int key )
 {
 	// Abstract away Glut and openFrameworks...
 	switch ( key )

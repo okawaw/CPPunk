@@ -56,7 +56,7 @@ public:
 	static float distanceRectPoint( float pX, float pY, float rX, float rY, float rW, float rH );
 
 private:
-	static CPPKeys::id getKeyPressed( int key );
+	static CPPKeys::id getKeyID( int key );
 
 	static unsigned int ms_width;                      // Width of the game.
 	static unsigned int ms_height;                     // Height of the game.
