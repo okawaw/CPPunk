@@ -1,7 +1,9 @@
 #ifndef CPP_BASE_ENTITY_H_
 #define CPP_BASE_ENTITY_H_
 
-#include "ofImage.h"
+#include "CPPBaseGraphic.h"
+
+#include <vector>
 
 class CPPBaseWorld;
 
@@ -13,9 +15,12 @@ public:
 		bool operator()( const CPPBaseEntity* left, const CPPBaseEntity* right );
 	};
 
-public:                                  // TODO: Pass a Graphic once it is implemented.
-	CPPBaseEntity( const std::string& graphicFile = "", float x = 0, float y = 0 );
+public:
+	CPPBaseEntity( float x = 0, float y = 0, CPPBaseGraphic* graphic = NULL );
 	virtual ~CPPBaseEntity();
+
+	bool isActive() const;
+	void setActive( const bool active );
 
 	bool isVisible() const;
 	void setVisible( const bool visible );
@@ -62,7 +67,8 @@ public:                                  // TODO: Pass a Graphic once it is impl
 
 	bool onCamera() const;
 
-	void setGraphic( const std::string& file );
+	CPPBaseGraphic* getGraphic() const;
+	void setGraphic( CPPBaseGraphic* graphic );
 
 	// Updates the Entity.
 	virtual void update();
@@ -132,6 +138,7 @@ public:                                  // TODO: Pass a Graphic once it is impl
 	virtual void moveCollideY( CPPBaseEntity* e );
 
 protected:
+	bool m_bActive;                                             // If the Entity should update.
 	bool m_bVisible;                                            // If the Entity should render.
 	bool m_bCollidable;                                         // If the Entity should respond to collision checks.
 
@@ -152,7 +159,7 @@ protected:
 
 private:
 	// TODO: make Graphic class.
-	ofImage m_graphic;                                          // Graphic used when drawing the Entity.
+	CPPBaseGraphic* m_pGraphic;                                 // Graphic used when drawing the Entity.
 
 	float _moveX;
 	float _moveY;

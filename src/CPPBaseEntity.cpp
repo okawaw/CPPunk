@@ -11,8 +11,9 @@
 #include "ofGraphics.h"
 #endif
 
-CPPBaseEntity::CPPBaseEntity( const std::string& graphicFile/* = ""*/, float x/* = 0*/, float y/* = 0*/ ) :
+CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* graphic/* = NULL*/ ) :
   m_bVisible( true )
+, m_bActive( true )
 , m_bCollidable( true )
 , m_posX( x )
 , m_posY( y )
@@ -23,25 +24,24 @@ CPPBaseEntity::CPPBaseEntity( const std::string& graphicFile/* = ""*/, float x/*
 , m_type( 0 )
 , m_layer( 0 )
 , m_world( NULL )
+, m_pGraphic( graphic )
 , _moveX( 0 )
 , _moveY( 0 )
 {
-	if ( graphicFile.length() != 0 )
-	{
-		m_graphic.loadImage( graphicFile );
-		m_width = m_graphic.width;
-		m_height = m_graphic.height;
-	}
 }
 
 CPPBaseEntity::~CPPBaseEntity()
 {
+	delete m_pGraphic;
 }
 
 bool CPPBaseEntity::ptrCmp::operator()( const CPPBaseEntity* left, const CPPBaseEntity* right )
 {
 	return ( left->m_layer == right->m_layer ) ? left < right : left->m_layer > right->m_layer;
 }
+
+bool CPPBaseEntity::isActive() const { return m_bActive; }
+void CPPBaseEntity::setActive( const bool active ) { m_bActive = active; }
 
 bool CPPBaseEntity::isVisible() const { return m_bVisible; }
 void CPPBaseEntity::setVisible( const bool visible ) { m_bVisible = visible; }
@@ -108,16 +108,16 @@ bool CPPBaseEntity::onCamera() const
 	return collideRect( m_posX, m_posY, CPP::getCameraX(), CPP::getCameraY(), CPP::getWidth(), CPP::getHeight() );
 }
 
-void CPPBaseEntity::setGraphic( const std::string& file )
+CPPBaseGraphic* CPPBaseEntity::getGraphic() const
 {
-	if ( m_graphic.isAllocated() )
-	{
-		m_graphic.clear();
-	}
+	return m_pGraphic;
+}
 
-	m_graphic.loadImage( file );
-	m_width = m_graphic.width;
-	m_height = m_graphic.height;
+void CPPBaseEntity::setGraphic( CPPBaseGraphic* graphic )
+{
+	delete m_pGraphic;
+
+	m_pGraphic = graphic;
 }
 
 void CPPBaseEntity::update()
@@ -126,43 +126,51 @@ void CPPBaseEntity::update()
 
 void CPPBaseEntity::draw()
 {
-#ifdef DEBUG_MODE
-	ofSetColor(255,255,255);
-#endif
-
-	if ( m_bVisible )
+	if ( m_pGraphic && m_pGraphic->isVisible() )
 	{
-		m_graphic.draw( m_posX, m_posY );
-	}
+		if ( m_pGraphic->isRelative() )
+		{
+			m_pGraphic->draw( m_posX, m_posY );
+		}
+		else
+		{
+			m_pGraphic->draw( 0, 0 );
+		}
+
 	
 #ifdef DEBUG_MODE
-	ofPolyline p;
-	ofSetLineWidth( 2 );
+		ofPushStyle();
 
-	ofSetColor(255,0,0);
-	p.addVertex( m_posX - m_originX, m_posY - m_originY );
-	p.addVertex( m_posX - m_originX + m_width, m_posY - m_originY );
-	p.addVertex( m_posX - m_originX + m_width, m_posY - m_originY );
-	p.addVertex( m_posX - m_originX + m_width, m_posY - m_originY + m_height );
-	p.addVertex( m_posX - m_originX + m_width, m_posY - m_originY + m_height );
-	p.addVertex( m_posX - m_originX, m_posY - m_originY + m_height );
-	p.addVertex( m_posX - m_originX, m_posY - m_originY + m_height );
-	p.addVertex( m_posX - m_originX, m_posY - m_originY );
-	p.draw();
+		ofPolyline p;
+		ofSetLineWidth( 2 );
 
-	p.clear();
+		ofSetColor(255,0,0);
+		p.addVertex( m_posX - m_originX, m_posY - m_originY );
+		p.addVertex( m_posX - m_originX + m_width, m_posY - m_originY );
+		p.addVertex( m_posX - m_originX + m_width, m_posY - m_originY );
+		p.addVertex( m_posX - m_originX + m_width, m_posY - m_originY + m_height );
+		p.addVertex( m_posX - m_originX + m_width, m_posY - m_originY + m_height );
+		p.addVertex( m_posX - m_originX, m_posY - m_originY + m_height );
+		p.addVertex( m_posX - m_originX, m_posY - m_originY + m_height );
+		p.addVertex( m_posX - m_originX, m_posY - m_originY );
+		p.draw();
 
-	ofSetColor( 0, 255, 0 );
-	p.addVertex( m_posX - 2, m_posY - 2 );
-	p.addVertex( m_posX + 2, m_posY - 2 );
-	p.addVertex( m_posX + 2, m_posY - 2 );
-	p.addVertex( m_posX + 2, m_posY + 2 );
-	p.addVertex( m_posX + 2, m_posY + 2 );
-	p.addVertex( m_posX - 2, m_posY + 2 );
-	p.addVertex( m_posX - 2, m_posY + 2 );
-	p.addVertex( m_posX - 2, m_posY - 2 );
-	p.draw();
+		p.clear();
+
+		ofSetColor( 0, 255, 0 );
+		p.addVertex( m_posX - 2, m_posY - 2 );
+		p.addVertex( m_posX + 2, m_posY - 2 );
+		p.addVertex( m_posX + 2, m_posY - 2 );
+		p.addVertex( m_posX + 2, m_posY + 2 );
+		p.addVertex( m_posX + 2, m_posY + 2 );
+		p.addVertex( m_posX - 2, m_posY + 2 );
+		p.addVertex( m_posX - 2, m_posY + 2 );
+		p.addVertex( m_posX - 2, m_posY - 2 );
+		p.draw();
+
+		ofPopStyle();
 #endif
+	}
 }
 
 void CPPBaseEntity::added()

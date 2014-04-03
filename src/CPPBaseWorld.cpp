@@ -21,7 +21,14 @@ void CPPBaseWorld::update()
 {
 	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
-		( *i )->update();
+		if ( ( *i )->isActive() )
+		{
+			( *i )->update();
+		}
+		if ( ( *i )->getGraphic() && ( *i )->getGraphic()->isActive() )
+		{
+			( *i )->getGraphic()->update();
+		}
 	}
 }
 
@@ -29,7 +36,10 @@ void CPPBaseWorld::draw()
 {
 	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
-		( *i )->draw();
+		if ( ( *i )->isVisible() )
+		{
+			( *i )->draw();
+		}
 	}
 }
 
