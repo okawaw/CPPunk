@@ -13,8 +13,11 @@ public:
 	CPPStateHandler();
 	~CPPStateHandler();
 
-	// changes state and frees memory
-	void changeWorld( CPPBaseWorld* newWorld );
+	CPPBaseWorld* getWorld() const;
+	void setWorld( CPPBaseWorld* const newWorld );
+
+	// changes state and frees memory                       // TODO: REMOVE
+	//void changeWorld( CPPBaseWorld* newWorld );
 
 	// Callback functions
 	void setup();
@@ -32,8 +35,11 @@ public:
 	void gotMessage( ofMessage msg );
 
 private:
-	// current world object pointer
-	/*static*/ CPPBaseWorld* m_pCurWorld;
+	void checkWorld();
+
+	/*static*/ CPPBaseWorld* m_pCurWorld;      // Current World object pointer.
+
+	CPPBaseWorld* m_pGoto;                     // World to switch to.
 };
 
 #endif

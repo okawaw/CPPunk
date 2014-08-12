@@ -3,17 +3,20 @@
 #include "utils/CPPInput.h"
 
 #include "ofAppRunner.h"
+#include "ofUtils.h"
 
 static const int CAMERA_Z = 100;
 
 static const std::string VERSION = "1.0.0";       // The CPPunk major version.
+
+bool CPP::ms_bPaused = false;                     // If the game should stop updating/rendering.
 
 unsigned int CPP::ms_width;                       // Width of the game.
 unsigned int CPP::ms_height;                      // Height of the game.
 float CPP::ms_halfWidth;                          // Half width of the game.
 float CPP::ms_halfHeight;                         // Half height of the game.
 
-unsigned int CPP::ms_frameRate;                   // Desired frame rate of the game.
+unsigned int CPP::ms_assignedFrameRate;           // Desired frame rate of the game.
 
 CPPStateHandler CPP::ms_stateHandler;             // Static state handler.
 
@@ -37,7 +40,11 @@ void CPP::setup()
 //--------------------------------------------------------------
 void CPP::update()
 {
-	ms_stateHandler.update();
+	if ( !ms_bPaused )
+	{
+		ms_stateHandler.update();
+	}
+
 	CPPInput::update();
 }
 
@@ -45,7 +52,12 @@ void CPP::update()
 void CPP::draw()
 {
 	ms_camera.begin();
-	ms_stateHandler.draw();
+
+	if ( !ms_bPaused )                         // TODO: pausing the render results in nothing being drawn...fix this...
+	{
+		ms_stateHandler.draw();
+	}
+
 	ms_camera.end();
 }
 
@@ -110,10 +122,16 @@ void CPP::dragEvent( ofDragInfo dragInfo )
 	ms_stateHandler.dragEvent( dragInfo );
 }
 
+CPPBaseWorld* CPP::getWorld() { return ms_stateHandler.getWorld(); }
+
 void CPP::setWorld( CPPBaseWorld* newWorld )
 {
-	ms_stateHandler.changeWorld( newWorld );
+	// ms_stateHandler.changeWorld( newWorld );       // old TODO: REMOVE
+	ms_stateHandler.setWorld( newWorld );
 }
+
+bool CPP::getPaused() { return ms_bPaused; }
+void CPP::setPaused( const bool paused ) { ms_bPaused = paused; }
 
 unsigned int CPP::getWidth() { return ms_width; }
 unsigned int CPP::getHeight() { return ms_height; }
@@ -132,11 +150,17 @@ void CPP::setHeight( unsigned int height )
 	ms_halfHeight = height / 2.0;
 }
 
-void CPP::setFrameRate( unsigned int frameRate )
+unsigned int CPP::getAssignedFrameRate() { return ms_assignedFrameRate; }
+
+void CPP::setAssignedFrameRate( unsigned int frameRate )
 {
-	ms_frameRate = frameRate;
+	ms_assignedFrameRate = frameRate;
 	ofSetFrameRate( frameRate );
 }
+
+float CPP::getFrameRate() { return ofGetFrameRate(); }
+
+double CPP::getElapsed() { return ofGetLastFrameTime(); }
 
 float CPP::getCameraX()
 {
@@ -243,7 +267,7 @@ float CPP::distanceRectPoint( float pX, float pY, float rX, float rY, float rW, 
 	return distance( pX, pY, rX, rY );
 }
 
-CPPKeys::id CPP::getKeyID( int key )
+CPPKeys::id CPP::getKeyID( int key )            // TODO: put in CPPKey?
 {
 	// Abstract away Glut and openFrameworks...
 	switch ( key )

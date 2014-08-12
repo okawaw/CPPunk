@@ -6,7 +6,8 @@
 class CPPEngine
 {
 public:
-	static void init( CPPBaseWorld* world, unsigned int width, unsigned int height, unsigned int frameRate = 60 );
+	// Defines startup information about your game.
+	static void init( CPPBaseWorld* world, unsigned int width, unsigned int height, bool fixed = false, unsigned int frameRate = 60 );
 };
 
 #endif

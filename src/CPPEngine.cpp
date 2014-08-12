@@ -5,7 +5,7 @@
 #include "ofAppGlutWindow.h"
 #include "ofAppRunner.h"
 
-void CPPEngine::init( CPPBaseWorld* world, unsigned int width, unsigned int height, unsigned int frameRate/* = 60*/ )
+void CPPEngine::init( CPPBaseWorld* world, unsigned int width, unsigned int height, bool fixed/* = false*/, unsigned int frameRate/* = 60*/ )
 {
 	ofAppGlutWindow window;
 	ofSetupOpenGL( &window, width, height, OF_WINDOW ); // Set up the GL context
@@ -17,7 +17,15 @@ void CPPEngine::init( CPPBaseWorld* world, unsigned int width, unsigned int heig
 	CPP::setWidth( width );
 	CPP::setHeight( height );
 
-	CPP::setFrameRate( frameRate );
+	if ( !fixed )
+	{
+		CPP::setAssignedFrameRate( 0 );
+	}
+	else
+	{
+		CPP::setAssignedFrameRate( frameRate );
+	}
+	
 
 	ofRunApp( cpp ); // DOES NOT EXIT.
 }

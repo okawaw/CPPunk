@@ -16,7 +16,7 @@ public:
 	};
 
 public:
-	CPPBaseEntity( float x = 0, float y = 0, CPPBaseGraphic* graphic = NULL );
+	CPPBaseEntity( float x = 0, float y = 0, CPPBaseGraphic* graphic = NULL, bool autoCleanup = false );
 	virtual ~CPPBaseEntity();
 
 	bool isActive() const;
@@ -59,6 +59,8 @@ public:
 
 	CPPBaseWorld* getWorld() const;
 	void setWorld( CPPBaseWorld* const world );
+
+	bool isAutoCleanup() const;
 
 	int getLayer() const;
 	void setLayer( const int layer );
@@ -158,6 +160,9 @@ protected:
 	CPPBaseWorld* m_world;                                      // World that this entity is in.
 
 private:
+	// Cleanup.
+	const bool m_bAutoCleanup;                                  // If the Entity should be auto deallocated when its World is destroyed.
+
 	// TODO: make Graphic class.
 	CPPBaseGraphic* m_pGraphic;                                 // Graphic used when drawing the Entity.
 

@@ -31,8 +31,11 @@ public:
 	void gotMessage( ofMessage msg );
 
 
-
+	static CPPBaseWorld* getWorld();
 	static void setWorld( CPPBaseWorld* newWorld );
+
+	static bool getPaused();
+	static void setPaused( const bool paused );
 
 	static unsigned int getWidth();
 	static unsigned int getHeight();
@@ -41,7 +44,12 @@ public:
 	static void setWidth( unsigned int width );
 	static void setHeight( unsigned int height );
 
-	static void setFrameRate( unsigned int frameRate );
+	static unsigned int getAssignedFrameRate();
+	static void setAssignedFrameRate( unsigned int frameRate );
+	static float getFrameRate();
+
+	// Time elapsed since the last frame (in seconds).
+	static double getElapsed();
 
 	static float getCameraX();
 	static float getCameraY();
@@ -58,12 +66,14 @@ public:
 private:
 	static CPPKeys::id getKeyID( int key );
 
+	static bool ms_bPaused;                            // If the game should stop updating/rendering.
+
 	static unsigned int ms_width;                      // Width of the game.
 	static unsigned int ms_height;                     // Height of the game.
 	static float ms_halfWidth;                         // Half width of the game.
 	static float ms_halfHeight;                        // Half height of the game.
 
-	static unsigned int ms_frameRate;                  // Desired frame rate of the game.
+	static unsigned int ms_assignedFrameRate;          // Desired frame rate of the game.
 
 	static CPPStateHandler ms_stateHandler;            // StateHandler for the game.
 

@@ -11,7 +11,7 @@
 #include "ofGraphics.h"
 #endif
 
-CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* graphic/* = NULL*/ ) :
+CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* graphic/* = NULL*/, bool autoCleanup/* = false */ ) :
   m_bVisible( true )
 , m_bActive( true )
 , m_bCollidable( true )
@@ -24,6 +24,7 @@ CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* 
 , m_type( 0 )
 , m_layer( 0 )
 , m_world( NULL )
+, m_bAutoCleanup( autoCleanup )
 , m_pGraphic( graphic )
 , _moveX( 0 )
 , _moveY( 0 )
@@ -32,6 +33,7 @@ CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* 
 
 CPPBaseEntity::~CPPBaseEntity()
 {
+	// TODO: make this optional...
 	delete m_pGraphic;
 }
 
@@ -79,7 +81,9 @@ float CPPBaseEntity::getTop() const { return m_posY - m_originY; }
 float CPPBaseEntity::getBottom() const { return m_posY - m_originY + m_height; }
 
 CPPBaseWorld* CPPBaseEntity::getWorld() const { return m_world; }
-void CPPBaseEntity::setWorld( CPPBaseWorld* const world ) { m_world = world; }
+void CPPBaseEntity::setWorld( CPPBaseWorld* const world ) { m_world = world; } // TODO: Make a friend function...
+
+bool CPPBaseEntity::isAutoCleanup() const { return m_bAutoCleanup; }
 
 int CPPBaseEntity::getLayer() const { return m_layer; }
 void CPPBaseEntity::setLayer( const int layer )
