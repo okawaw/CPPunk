@@ -42,6 +42,9 @@ bool CPPBaseEntity::ptrCmp::operator()( const CPPBaseEntity* left, const CPPBase
 	return ( left->m_layer == right->m_layer ) ? left < right : left->m_layer > right->m_layer;
 }
 
+CPPBaseEntity::EntityKey::EntityKey() {}
+CPPBaseEntity::EntityKey::~EntityKey() {}
+
 bool CPPBaseEntity::isActive() const { return m_bActive; }
 void CPPBaseEntity::setActive( const bool active ) { m_bActive = active; }
 
@@ -81,7 +84,7 @@ float CPPBaseEntity::getTop() const { return m_posY - m_originY; }
 float CPPBaseEntity::getBottom() const { return m_posY - m_originY + m_height; }
 
 CPPBaseWorld* CPPBaseEntity::getWorld() const { return m_world; }
-void CPPBaseEntity::setWorld( CPPBaseWorld* const world ) { m_world = world; } // TODO: Make a friend function...
+void CPPBaseEntity::setWorld( CPPBaseWorld* const world, EntityKey& ) { m_world = world; }
 
 bool CPPBaseEntity::isAutoCleanup() const { return m_bAutoCleanup; }
 

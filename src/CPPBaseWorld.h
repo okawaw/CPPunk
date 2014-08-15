@@ -130,6 +130,8 @@ private:
 	// Adding and Removal.
 	std::vector< CPPBaseEntity* > m_add;                           // Vector of entities to be added.
 	std::vector< CPPBaseEntity* > m_remove;                        // Vector of entities to be removed.
+
+	static CPPBaseEntity::EntityKey m_entityKey;
 };
 
 #endif

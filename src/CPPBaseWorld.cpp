@@ -14,6 +14,8 @@ static float squarePoints( float x1, float y1, float x2, float y2 );
 // Calculates the squared distance between a rectangle and a point.
 static float squarePointRect( float px, float py, float rx, float ry, float rw, float rh );
 
+CPPBaseEntity::EntityKey CPPBaseWorld::m_entityKey;
+
 bool CPPBaseWorld::isActive() const { return m_bActive; }
 void CPPBaseWorld::setActive( const bool active ) { m_bActive = active; }
 
@@ -130,7 +132,7 @@ void CPPBaseWorld::addEntity( CPPBaseEntity* entity, bool quiet/* = false*/ ) //
 
 	// TODO: What if the entity is already part of a world?
 
-	entity->setWorld( this );
+	entity->setWorld( this, m_entityKey );
 
 	if ( !quiet )
 	{
@@ -146,7 +148,7 @@ CPPBaseEntity* CPPBaseWorld::removeEntity( CPPBaseEntity* entity, bool quiet/* =
 		return NULL;
 	}
 
-	entity->setWorld( NULL );
+	entity->setWorld( NULL, m_entityKey );
 
 	if ( !quiet )
 	{
@@ -166,9 +168,9 @@ void CPPBaseWorld::updateEntityLayer( CPPBaseEntity* entity, int layer )
 		return;
 	}
 
-	entity->setWorld( NULL );
+	entity->setWorld( NULL, m_entityKey );
 	entity->setLayer( layer );
-	entity->setWorld( this );
+	entity->setWorld( this, m_entityKey );
 	m_entities.insert( entity );
 }
 
@@ -820,7 +822,7 @@ void CPPBaseWorld::updateLists( bool shouldAdd/* = true*/ )
 			}
 
 			e->removed();
-			e->setWorld( NULL );
+			e->setWorld( NULL, m_entityKey );
 
 			m_entities.erase( e );
 		}
@@ -841,7 +843,7 @@ void CPPBaseWorld::updateLists( bool shouldAdd/* = true*/ )
 
 			m_entities.insert( e );
 
-			e->setWorld( this );
+			e->setWorld( this, m_entityKey );
 			e->added();
 		}
 		m_add.clear();

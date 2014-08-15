@@ -15,6 +15,16 @@ public:
 		bool operator()( const CPPBaseEntity* left, const CPPBaseEntity* right );
 	};
 
+	class EntityKey
+	{
+		friend class CPPBaseWorld;
+	private:
+		EntityKey();
+		~EntityKey();
+		EntityKey( const EntityKey& );
+		const EntityKey& operator=( const EntityKey& );
+	};
+
 public:
 	CPPBaseEntity( float x = 0, float y = 0, CPPBaseGraphic* graphic = NULL, bool autoCleanup = false );
 	virtual ~CPPBaseEntity();
@@ -58,7 +68,7 @@ public:
 	float getBottom() const;
 
 	CPPBaseWorld* getWorld() const;
-	void setWorld( CPPBaseWorld* const world );
+	void setWorld( CPPBaseWorld* const world, EntityKey& );
 
 	bool isAutoCleanup() const;
 
