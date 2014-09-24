@@ -132,6 +132,9 @@ private:
 	std::vector< CPPBaseEntity* > m_remove;                        // Vector of entities to be removed.
 
 	static CPPBaseEntity::EntityKey m_entityKey;
+
+	CPPBaseWorld( const CPPBaseWorld& );
+	CPPBaseWorld& operator=( const CPPBaseWorld& );
 };
 
 #endif

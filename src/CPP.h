@@ -14,8 +14,6 @@
 class CPP : public ofBaseApp
 {
 public:
-	CPP();
-
 	void setup();
 	void update();
 	void draw();

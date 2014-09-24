@@ -12,8 +12,8 @@
 #endif
 
 CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* graphic/* = NULL*/, bool autoCleanup/* = false */ ) :
-  m_bVisible( true )
-, m_bActive( true )
+  m_bActive( true )
+, m_bVisible( true )
 , m_bCollidable( true )
 , m_posX( x )
 , m_posY( y )
@@ -33,8 +33,10 @@ CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* 
 
 CPPBaseEntity::~CPPBaseEntity()
 {
-	// TODO: make this optional...
-	delete m_pGraphic;
+	if ( m_pGraphic->isAutoCleanup() )
+	{
+		delete m_pGraphic;
+	}
 }
 
 bool CPPBaseEntity::ptrCmp::operator()( const CPPBaseEntity* left, const CPPBaseEntity* right )

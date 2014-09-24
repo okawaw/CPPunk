@@ -10,7 +10,7 @@
 class CPPImage : public CPPBaseGraphic
 {
 public:
-	CPPImage( std::string source );
+	CPPImage( std::string source, bool isAutoCleanup = false );
 	virtual ~CPPImage();
 
 	virtual void update();
@@ -67,8 +67,10 @@ private:
 	unsigned char m_blue;    // Blue value of the image, a value from 0 to 255.
 	unsigned char m_alpha;    // Opacity of the Image, a value from 0 to 255.
 
-	ofTexture m_texture;      // Texture data for the image.
+	ofTexture m_texture;      // Texture data for the image. TODO: MAKE A POINTER TO A RESOURCEMANAGER GIVEN TEXTURE
 
+	CPPImage( const CPPImage& );
+	CPPImage& operator=( const CPPImage& );
 };
 
 #endif

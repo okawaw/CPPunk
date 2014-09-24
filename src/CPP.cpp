@@ -22,10 +22,6 @@ CPPStateHandler CPP::ms_stateHandler;             // Static state handler.
 
 ofCamera CPP::ms_camera;                          // Camera for the game.
 
-CPP::CPP()
-{
-}
-
 //--------------------------------------------------------------
 void CPP::setup()
 {

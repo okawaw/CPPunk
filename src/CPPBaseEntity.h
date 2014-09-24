@@ -22,7 +22,7 @@ public:
 		EntityKey();
 		~EntityKey();
 		EntityKey( const EntityKey& );
-		const EntityKey& operator=( const EntityKey& );
+		EntityKey& operator=( const EntityKey& );
 	};
 
 public:
@@ -171,13 +171,16 @@ protected:
 
 private:
 	// Cleanup.
-	const bool m_bAutoCleanup;                                  // If the Entity should be auto deallocated when its World is destroyed.
+	const bool m_bAutoCleanup;                                  // If the Entity should be auto deallocated.
 
 	// TODO: make Graphic class.
 	CPPBaseGraphic* m_pGraphic;                                 // Graphic used when drawing the Entity.
 
 	float _moveX;
 	float _moveY;
+
+	CPPBaseEntity( const CPPBaseEntity& );
+	CPPBaseEntity& operator=( const CPPBaseEntity& );
 };
 
 #endif

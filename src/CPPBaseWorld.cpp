@@ -23,8 +23,8 @@ bool CPPBaseWorld::isVisible() const { return m_bVisible; }
 void CPPBaseWorld::setVisible( const bool visible ) { m_bVisible = visible; }
 
 CPPBaseWorld::CPPBaseWorld( bool autoCleanup/* = false */ ) :
-  m_bVisible( true )
-, m_bActive( true )
+  m_bActive( true )
+, m_bVisible( true )
 , m_bAutoCleanup( autoCleanup )
 {
 }

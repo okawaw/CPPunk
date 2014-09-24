@@ -4,7 +4,7 @@
 class CPPBaseGraphic
 {
 public:
-	CPPBaseGraphic();
+	CPPBaseGraphic( bool autoCleanup = false );
 	virtual ~CPPBaseGraphic();
 
 	virtual void update();
@@ -25,6 +25,8 @@ public:
 	bool isRelative() const;
 	void setRelative( const bool relative );
 
+	bool isAutoCleanup() const;
+
 protected:
 	bool m_bActive;               // If the graphic should update.
 	bool m_bVisible;              // If the graphic should update.
@@ -34,6 +36,11 @@ protected:
 
 	bool m_bRelative;             // If the graphic should render at its position relative to its parent Entity's position.
 
+private:
+	const bool m_bAutoCleanup;    // If the Graphic should be auto deallocated.
+
+	CPPBaseGraphic( const CPPBaseGraphic& );
+	CPPBaseGraphic& operator=( const CPPBaseGraphic& );
 };
 
 #endif

@@ -5,8 +5,9 @@
 
 #include <iostream>
 
-CPPImage::CPPImage( std::string source ) :
-  m_angle( 0 )
+CPPImage::CPPImage( std::string source, bool autoCleanup/* = false */ ) :
+  CPPBaseGraphic( autoCleanup )
+, m_angle( 0 )
 , m_scale( 1 )
 , m_scaleX( 1 )
 , m_scaleY( 1 )

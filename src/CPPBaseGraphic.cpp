@@ -1,11 +1,12 @@
 #include "CPPBaseGraphic.h"
 
-CPPBaseGraphic::CPPBaseGraphic() :
+CPPBaseGraphic::CPPBaseGraphic( bool autoCleanup/* = false */ ) :
   m_bActive( false )
 , m_bVisible( true )
 , m_posX( 0 )
 , m_posY( 0 )
 , m_bRelative( true )
+, m_bAutoCleanup( autoCleanup )
 {
 }
 
@@ -27,6 +28,8 @@ void CPPBaseGraphic::setPosY( const float y ) { m_posY = y; }
 
 bool CPPBaseGraphic::isRelative() const { return m_bRelative; }
 void CPPBaseGraphic::setRelative( const bool relative ) { m_bRelative = relative; }
+
+bool CPPBaseGraphic::isAutoCleanup() const { return m_bAutoCleanup; }
 
 void CPPBaseGraphic::update()
 {
