@@ -18,6 +18,8 @@ float CPP::ms_halfHeight;                         // Half height of the game.
 
 unsigned int CPP::ms_assignedFrameRate;           // Desired frame rate of the game.
 
+CPP::CPPResourceManager CPP::ms_resourceManager;  // Static resource manager.
+
 CPPStateHandler CPP::ms_stateHandler;             // Static state handler.
 
 ofCamera CPP::ms_camera;                          // Camera for the game.
@@ -116,6 +118,16 @@ void CPP::gotMessage( ofMessage msg )
 void CPP::dragEvent( ofDragInfo dragInfo )
 { 
 	ms_stateHandler.dragEvent( dragInfo );
+}
+
+ofTexture* CPP::getTexture( const std::string& filename )
+{
+	return ms_resourceManager.useTexture( filename );
+}
+
+void CPP::releaseTexture( const std::string& filename )
+{
+	ms_resourceManager.releaseTexture( filename );
 }
 
 CPPBaseWorld* CPP::getWorld() { return ms_stateHandler.getWorld(); }

@@ -825,6 +825,11 @@ void CPPBaseWorld::updateLists( bool shouldAdd/* = true*/ )
 			e->setWorld( NULL, m_entityKey );
 
 			m_entities.erase( e );
+
+			if ( e->isAutoCleanup() )
+			{
+				delete e;
+			}
 		}
 		m_remove.clear();
 	}

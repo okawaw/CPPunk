@@ -7,7 +7,7 @@
 
 #include "ofEvents.h"
 
-class CPPStateHandler
+class CPPStateHandler // TODO: Make it a private class of CPP
 {
 public:
 	CPPStateHandler();

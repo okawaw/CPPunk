@@ -63,11 +63,12 @@ private:
 	float m_originY;          // Y origin of the image, determines transformation point. Defaults to top-left corner.
 
 	unsigned char m_red;      // Red value of the image, a value from 0 to 255.
-	unsigned char m_green;     // Green value of the image, a value from 0 to 255.
-	unsigned char m_blue;    // Blue value of the image, a value from 0 to 255.
+	unsigned char m_green;    // Green value of the image, a value from 0 to 255.
+	unsigned char m_blue;     // Blue value of the image, a value from 0 to 255.
 	unsigned char m_alpha;    // Opacity of the Image, a value from 0 to 255.
 
-	ofTexture m_texture;      // Texture data for the image. TODO: MAKE A POINTER TO A RESOURCEMANAGER GIVEN TEXTURE
+	ofTexture* m_pTexture;    // Texture data for the image. TODO: MAKE A POINTER TO A RESOURCEMANAGER GIVEN TEXTURE
+	std::string m_source;
 
 	CPPImage( const CPPImage& );
 	CPPImage& operator=( const CPPImage& );

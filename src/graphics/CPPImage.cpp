@@ -3,6 +3,8 @@
 #include "ofImage.h"
 #include "ofGraphics.h"
 
+#include "../CPP.h"
+
 #include <iostream>
 
 CPPImage::CPPImage( std::string source, bool autoCleanup/* = false */ ) :
@@ -17,16 +19,15 @@ CPPImage::CPPImage( std::string source, bool autoCleanup/* = false */ ) :
 , m_green( 255 )
 , m_blue( 255 )
 , m_alpha( 255 )
+, m_source( source )
 {
 	// Load the image file into the texture data.
-	if ( !ofLoadImage( m_texture, source ) )
-	{
-		std::cerr << "ERROR: the file \"" << source << "\" could not be loaded." << std::endl;
-	}
+	m_pTexture = CPP::getTexture( source );
 }
 
 CPPImage::~CPPImage()
 {
+	CPP::releaseTexture( m_source );
 }
 
 float CPPImage::getAngle() const { return m_angle; }
@@ -79,12 +80,12 @@ void CPPImage::draw( float x, float y )                                         
 
 	if ( m_angle == 0 && m_scaleX * m_scale == 1 && m_scaleY * m_scale == 1 )
 	{
-		m_texture.draw( x + m_posX - m_originX, y + m_posY - m_originY );
+		m_pTexture->draw( x + m_posX - m_originX, y + m_posY - m_originY );
 	}
 	// Render without transformations.
 	else
 	{
-		m_texture.draw( x + m_posX - m_originX, y + m_posY - m_originY );           // TODO: transformations.
+		m_pTexture->draw( x + m_posX - m_originX, y + m_posY - m_originY );           // TODO: transformations.
 	}
 
 	if ( m_alpha != 255 )
@@ -99,16 +100,16 @@ void CPPImage::draw( float x, float y )                                         
 
 void CPPImage::centerOrigin()
 {
-	m_originX = m_texture.getWidth() / 2;
-	m_originY = m_texture.getHeight() / 2;
+	m_originX = m_pTexture->getWidth() / 2;
+	m_originY = m_pTexture->getHeight() / 2;
 }
 
 float CPPImage::getWidth()
 {
-	return m_texture.getWidth();
+	return m_pTexture->getWidth();
 }
 
 float CPPImage::getHeight()
 {
-	return m_texture.getHeight();
+	return m_pTexture->getHeight();
 }

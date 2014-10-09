@@ -8,11 +8,28 @@
 #include "utils/CPPKey.h"
 
 #include "ofCamera.h"
+#include "ofTexture.h"
 
 #include <string>
 
 class CPP : public ofBaseApp
 {
+private:
+	class CPPResourceManager
+	{
+	public:
+		CPPResourceManager();
+		~CPPResourceManager();
+
+		ofTexture* useTexture( const std::string& key );
+		void releaseTexture( const std::string& key );
+
+	private:
+		// < resourceName, < ofTexturePointer, retainCount > >
+		std::map< std::string, std::pair< ofTexture*, unsigned int > > m_dataMap;
+		ofTexture* m_pErrorTexture;
+	};
+
 public:
 	void setup();
 	void update();
@@ -28,6 +45,8 @@ public:
 	void dragEvent( ofDragInfo dragInfo );
 	void gotMessage( ofMessage msg );
 
+	static ofTexture* getTexture( const std::string& filename );
+	static void releaseTexture( const std::string& filename );
 
 	static CPPBaseWorld* getWorld();
 	static void setWorld( CPPBaseWorld* newWorld );
@@ -72,6 +91,8 @@ private:
 	static float ms_halfHeight;                        // Half height of the game.
 
 	static unsigned int ms_assignedFrameRate;          // Desired frame rate of the game.
+
+	static CPPResourceManager ms_resourceManager;      // ResourceManager for the game.
 
 	static CPPStateHandler ms_stateHandler;            // StateHandler for the game.
 

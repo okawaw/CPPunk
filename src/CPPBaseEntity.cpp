@@ -33,7 +33,7 @@ CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* 
 
 CPPBaseEntity::~CPPBaseEntity()
 {
-	if ( m_pGraphic->isAutoCleanup() )
+	if ( m_pGraphic && m_pGraphic->isAutoCleanup() )
 	{
 		delete m_pGraphic;
 	}
