@@ -19,10 +19,9 @@ CPPImage::CPPImage( std::string source, bool autoCleanup/* = false */ ) :
 , m_green( 255 )
 , m_blue( 255 )
 , m_alpha( 255 )
+, m_pTexture( CPP::getTexture( source ) )
 , m_source( source )
 {
-	// Load the image file into the texture data.
-	m_pTexture = CPP::getTexture( source );
 }
 
 CPPImage::~CPPImage()

@@ -23,7 +23,7 @@ CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* 
 , m_originY( 0 )
 , m_type( 0 )
 , m_layer( 0 )
-, m_world( NULL )
+, m_pWorld( NULL )
 , m_bAutoCleanup( autoCleanup )
 , m_pGraphic( graphic )
 , _moveX( 0 )
@@ -85,8 +85,8 @@ float CPPBaseEntity::getRight() const { return m_posX - m_originX + m_width; }
 float CPPBaseEntity::getTop() const { return m_posY - m_originY; }
 float CPPBaseEntity::getBottom() const { return m_posY - m_originY + m_height; }
 
-CPPBaseWorld* CPPBaseEntity::getWorld() const { return m_world; }
-void CPPBaseEntity::setWorld( CPPBaseWorld* const world, EntityKey& ) { m_world = world; }
+CPPBaseWorld* CPPBaseEntity::getWorld() const { return m_pWorld; }
+void CPPBaseEntity::setWorld( CPPBaseWorld* const world, EntityKey& ) { m_pWorld = world; }
 
 bool CPPBaseEntity::isAutoCleanup() const { return m_bAutoCleanup; }
 
@@ -94,9 +94,9 @@ int CPPBaseEntity::getLayer() const { return m_layer; }
 void CPPBaseEntity::setLayer( const int layer )
 {	
 	// Reinsert this entity into its world to make sure it draws in the correct order.
-	if ( m_world )
+	if ( m_pWorld )
 	{
-		m_world->updateEntityLayer( this, layer );
+		m_pWorld->updateEntityLayer( this, layer );
 	}
 	else
 	{
@@ -192,12 +192,12 @@ void CPPBaseEntity::removed()
 
 CPPBaseEntity* CPPBaseEntity::collide( unsigned int type, float x, float y ) const
 {
-	if ( !m_world )
+	if ( !m_pWorld )
 	{
 		return NULL;
 	}
 
-	return m_world->collideRect( type, x - m_originX, y - m_originY, m_width, m_height, this );
+	return m_pWorld->collideRect( type, x - m_originX, y - m_originY, m_width, m_height, this );
 }
 
 bool CPPBaseEntity::collideRect( float x, float y, float rX, float rY, float rWidth, float rHeight ) const
@@ -208,7 +208,7 @@ bool CPPBaseEntity::collideRect( float x, float y, float rX, float rY, float rWi
 
 CPPBaseEntity* CPPBaseEntity::collideTypes( const vector< unsigned int >& types, float x, float y ) const
 {
-	if ( !m_world )
+	if ( !m_pWorld )
 	{
 		return NULL;
 	}
@@ -248,12 +248,12 @@ bool CPPBaseEntity::collidePoint( float x, float y, float pX, float pY ) const
 
 void CPPBaseEntity::collideInto( unsigned int type, float x, float y, std::vector< CPPBaseEntity* >& into ) const
 {
-	if ( !m_world )
+	if ( !m_pWorld )
 	{
 		return;
 	}
 
-	m_world->collideRectInto( type, x - m_originX, y - m_originY, m_width, m_height, into, this );
+	m_pWorld->collideRectInto( type, x - m_originX, y - m_originY, m_width, m_height, into, this );
 }
 
 float CPPBaseEntity::distanceFrom( CPPBaseEntity* e, bool useHitboxes/* = false*/ ) const
