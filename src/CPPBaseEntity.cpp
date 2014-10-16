@@ -9,6 +9,7 @@
 
 #ifdef DEBUG_MODE
 #include "ofGraphics.h"
+#include "ofPolyline.h"
 #endif
 
 CPPBaseEntity::CPPBaseEntity( float x/* = 0*/, float y/* = 0*/, CPPBaseGraphic* graphic/* = NULL*/, bool autoCleanup/* = false */ ) :
@@ -217,7 +218,7 @@ CPPBaseEntity* CPPBaseEntity::collideTypes( const vector< unsigned int >& types,
 
 	for ( unsigned int i = 0; i < types.size(); ++i )
 	{
-		if ( e = collide( types[ i ], x, y ) )
+		if ( ( e = collide( types[ i ], x, y ) ) )
 		{
 			return e;
 		}

@@ -4,6 +4,7 @@
 #include "CPPBaseGraphic.h"
 
 #include <vector>
+#include <stdlib.h>
 
 class CPPBaseWorld;
 
