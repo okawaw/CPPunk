@@ -3,6 +3,7 @@
 #include "utils/CPPInput.h"
 
 #include "ofAppRunner.h"
+#include "ofConstants.h"
 #include "ofUtils.h"
 
 static const int CAMERA_Z = 100;
@@ -29,10 +30,18 @@ void CPP::setup()
 {
 	// Set world camera to orthographic mode.
 	ms_camera.enableOrtho();
+
+#if OF_VERSION_MAJOR == 0 && OF_VERSION_MINOR < 8
 	// Move camera's top left position to (0, 0) by default.
 	ms_camera.setPosition( 0, ms_height, CAMERA_Z );                            // IMPORTANT! Camera's y position must be sum of position and screen height.
 	// Flip camera's y values to prevent mirroring.
 	ms_camera.setScale( 1, -1, 1 );
+#else
+	// Move camera's top left position to (0, 0) by default.
+	ms_camera.setPosition( 0, 0, CAMERA_Z );
+	// Set VFlip to true to make origin in top left corner.
+	ms_camera.setVFlip( true );
+#endif
 }
 
 //--------------------------------------------------------------
