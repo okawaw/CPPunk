@@ -64,7 +64,7 @@ ofTexture* CPP::CPPResourceManager::useTexture( const std::string& key )
 			return m_pErrorTexture;
 		}
 
-		m_dataMap.insert( std::pair< string, std::pair< ofTexture*, unsigned int > >( key, std::pair< ofTexture*, unsigned int >( newTex, 1 ) ) );
+		m_dataMap.insert( std::pair< std::string, std::pair< ofTexture*, unsigned int > >( key, std::pair< ofTexture*, unsigned int >( newTex, 1 ) ) );
 
 		return newTex;
 	}

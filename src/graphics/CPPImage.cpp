@@ -1,13 +1,19 @@
 #include "CPPImage.h"
 
-#include "ofImage.h"
 #include "ofGraphics.h"
+#include "ofTexture.h"
 
 #include "../CPP.h"
 
 #include <iostream>
 
-CPPImage::CPPImage( std::string source, bool autoCleanup/* = false */ ) :
+CPPImage::CPPImage( const std::string& source,
+                    bool autoCleanup/* = false */,
+                    bool useClipRect/* = false */,
+                    float clipRectPosX/* = 0 */,
+                    float clipRectPosY/* = 0 */,
+                    float clipRectWidth/* = 0 */,
+                    float clipRectHeight/* = 0 */ ) :
   CPPBaseGraphic( autoCleanup )
 , m_angle( 0 )
 , m_scale( 1 )
@@ -21,6 +27,18 @@ CPPImage::CPPImage( std::string source, bool autoCleanup/* = false */ ) :
 , m_alpha( 255 )
 , m_pTexture( CPP::getTexture( source ) )
 , m_source( source )
+, m_clipRectPosX( clipRectPosX )
+, m_clipRectPosY( clipRectPosY )
+, m_clipRectWidth( useClipRect
+                     ? ( clipRectWidth != 0
+                       ? clipRectWidth
+                       : m_pTexture->getWidth() )
+                     : m_pTexture->getWidth() )
+, m_clipRectHeight( useClipRect
+                      ? ( clipRectHeight != 0
+                        ? clipRectHeight
+                        : m_pTexture->getHeight() )
+                      : m_pTexture->getHeight() )
 {
 }
 
@@ -79,7 +97,10 @@ void CPPImage::draw( float x, float y )                                         
 
 	if ( m_angle == 0 && m_scaleX * m_scale == 1 && m_scaleY * m_scale == 1 )
 	{
-		m_pTexture->draw( x + m_posX - m_originX, y + m_posY - m_originY );
+		m_pTexture->drawSubsection( x + m_posX - m_originX, y + m_posY - m_originY, // position
+		                            m_clipRectWidth*1, m_clipRectHeight*1,          // image dimensions (scale)
+		                            m_clipRectPosX, m_clipRectPosY,                 // clipping position
+		                            m_clipRectWidth, m_clipRectHeight);             // clipping dimensions
 	}
 	// Render without transformations.
 	else
@@ -99,16 +120,46 @@ void CPPImage::draw( float x, float y )                                         
 
 void CPPImage::centerOrigin()
 {
-	m_originX = m_pTexture->getWidth() / 2;
-	m_originY = m_pTexture->getHeight() / 2;
+	m_originX = m_clipRectWidth / 2;
+	m_originY = m_clipRectHeight / 2;
 }
 
-float CPPImage::getWidth()
+float CPPImage::getWidth() const
 {
-	return m_pTexture->getWidth();
+	return m_clipRectWidth;
 }
 
-float CPPImage::getHeight()
+float CPPImage::getHeight() const
 {
-	return m_pTexture->getHeight();
+	return m_clipRectHeight;
+}
+
+float CPPImage::getScaledWidth() const
+{
+	return m_clipRectWidth * m_scaleX * m_scale;
+}
+
+void CPPImage::setScaledWidth( const float w )
+{
+	m_scaleX = w / m_scale / m_clipRectWidth;
+}
+
+float CPPImage::getScaledHeight() const
+{
+	return m_clipRectHeight * m_scaleY * m_scale;
+}
+
+void CPPImage::setScaledHeight( const float h )
+{
+	m_scaleY = h / m_scale / m_clipRectHeight;
+}
+
+float CPPImage::getSourceRectPosX() const
+{
+	return m_clipRectPosX;
+}
+
+float CPPImage::getSourceRectPosY() const
+{
+	return m_clipRectPosY;
 }

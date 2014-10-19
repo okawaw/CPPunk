@@ -24,7 +24,6 @@ private:
 		ofTexture* useTexture( const std::string& key );
 		void releaseTexture( const std::string& key );
 
-	private:
 		// < resourceName, < ofTexturePointer, retainCount > >
 		std::map< std::string, std::pair< ofTexture*, unsigned int > > m_dataMap;
 		ofTexture* m_pErrorTexture;
