@@ -53,6 +53,12 @@ public:
 	static bool getPaused();
 	static void setPaused( const bool paused );
 
+	static bool getFixed();
+	static void setFixed( const bool fixed );
+
+	static bool getTimeInFrames();
+	static void setTimeInFrames( const bool timeInFrames );
+
 	static unsigned int getWidth();
 	static unsigned int getHeight();
 	static float getHalfWidth();
@@ -83,6 +89,10 @@ private:
 	static CPPKeys::id getKeyID( int key );
 
 	static bool ms_bPaused;                            // If the game should stop updating/rendering.
+
+	static bool ms_bFixed;                             // If the game is running at a fixed framerate.
+	static bool ms_bTimeInFrames;                      // If times should be given in frames (as opposed to seconds).
+	                                                   // Default is true in fixed timestep mode and false in variable timestep mode.
 
 	static unsigned int ms_width;                      // Width of the game.
 	static unsigned int ms_height;                     // Height of the game.

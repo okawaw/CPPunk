@@ -1,6 +1,6 @@
 #include "CPPSpritemap.h"
 
-#include "CPP.h"
+#include "../CPP.h"
 
 #include "ofTexture.h"
 
@@ -41,7 +41,11 @@ void CPPSpritemap::update()
 {
 	if ( m_pAnim && !m_bComplete )
 	{
-		float timeAdd = m_pAnim->m_frameRate * CPP::getElapsed();
+		float timeAdd = m_pAnim->m_frameRate * m_rate;
+		if ( !CPP::getTimeInFrames() )
+		{
+			timeAdd *= CPP::getElapsed();
+		}
 		m_timer += timeAdd;
 
 		if ( m_timer >= 1 )

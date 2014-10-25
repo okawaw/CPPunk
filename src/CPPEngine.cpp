@@ -17,6 +17,9 @@ void CPPEngine::init( CPPBaseWorld* world, unsigned int width, unsigned int heig
 	CPP::setWidth( width );
 	CPP::setHeight( height );
 
+	CPP::setFixed( fixed );
+	CPP::setTimeInFrames( fixed );
+
 	if ( !fixed )
 	{
 		CPP::setAssignedFrameRate( 0 );

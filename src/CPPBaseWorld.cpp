@@ -749,7 +749,7 @@ int CPPBaseWorld::layerFarthest() const
 {
 	if ( m_entities.size() == 0 )
 	{
-		return NULL;
+		return 0;
 	}
 
 	return ( *( m_entities.begin() ) )->getLayer();
@@ -759,7 +759,7 @@ int CPPBaseWorld::layerNearest() const
 {
 	if ( m_entities.size() == 0 )
 	{
-		return NULL;
+		return 0;
 	}
 
 	return ( *( m_entities.rbegin() ) )->getLayer();

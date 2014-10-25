@@ -12,6 +12,10 @@ static const std::string VERSION = "1.0.0";       // The CPPunk major version.
 
 bool CPP::ms_bPaused = false;                     // If the game should stop updating/rendering.
 
+bool CPP::ms_bFixed;                              // If the game is running at a fixed framerate
+bool CPP::ms_bTimeInFrames;                       // If times should be given in frames (as opposed to seconds).
+                                                  // Default is true in fixed timestep mode and false in variable timestep mode.
+
 unsigned int CPP::ms_width;                       // Width of the game.
 unsigned int CPP::ms_height;                      // Height of the game.
 float CPP::ms_halfWidth;                          // Half width of the game.
@@ -149,6 +153,12 @@ void CPP::setWorld( CPPBaseWorld* newWorld )
 
 bool CPP::getPaused() { return ms_bPaused; }
 void CPP::setPaused( const bool paused ) { ms_bPaused = paused; }
+
+bool CPP::getFixed() { return ms_bFixed; }
+void CPP::setFixed( const bool fixed ) { ms_bFixed = fixed; }
+
+bool CPP::getTimeInFrames() { return ms_bTimeInFrames; }
+void CPP::setTimeInFrames( const bool timeInFrames ) { ms_bTimeInFrames = timeInFrames; }
 
 unsigned int CPP::getWidth() { return ms_width; }
 unsigned int CPP::getHeight() { return ms_height; }
