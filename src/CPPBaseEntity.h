@@ -168,7 +168,7 @@ protected:
 
 	int m_layer;                                                // Layer of the Entity.
 
-	CPPBaseWorld* m_pWorld;                                      // World that this entity is in.
+	CPPBaseWorld* m_pWorld;                                     // World that this entity is in.
 
 private:
 	// Cleanup.

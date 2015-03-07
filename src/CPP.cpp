@@ -133,16 +133,6 @@ void CPP::dragEvent( ofDragInfo dragInfo )
 	ms_stateHandler.dragEvent( dragInfo );
 }
 
-ofTexture* CPP::getTexture( const std::string& filename )
-{
-	return ms_resourceManager.useTexture( filename );
-}
-
-void CPP::releaseTexture( const std::string& filename )
-{
-	ms_resourceManager.releaseTexture( filename );
-}
-
 CPPBaseWorld* CPP::getWorld() { return ms_stateHandler.getWorld(); }
 
 void CPP::setWorld( CPPBaseWorld* newWorld )
@@ -215,12 +205,12 @@ void CPP::setCameraPos( float x, float y )
 }
 
 // TODO: Write squareDistance
-float CPP::distance( float x1, float y1, float x2, float y2 )
+float CPPUtil::distance( float x1, float y1, float x2, float y2 )
 {
 	return sqrt( ( x2 - x1 ) * ( x2 - x1 ) + ( y2 - y1 ) * ( y2 - y1 ) );
 }
 
-float CPP::distanceRects( float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2 )
+float CPPUtil::distanceRects( float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2 )
 {
 	if ( x1 < x2 + w2 && x2 < x1 + w1 )
 	{
@@ -246,18 +236,18 @@ float CPP::distanceRects( float x1, float y1, float w1, float h1, float x2, floa
 	{
 		if ( y1 > y2 )
 		{
-			return distance( x1, y1, ( x2 + w2 ), ( y2 + h2 ) );
+			return CPPUtil::distance( x1, y1, ( x2 + w2 ), ( y2 + h2 ) );
 		}
-		return distance( x1, y1 + h1, x2 + w2, y2 );
+		return CPPUtil::distance( x1, y1 + h1, x2 + w2, y2 );
 	}
 	if ( y1 > y2 )
 	{
-		return distance( x1 + w1, y1, x2, y2 + h2 );
+		return CPPUtil::distance( x1 + w1, y1, x2, y2 + h2 );
 	}
-	return distance( x1 + w1, y1 + h1, x2, y2 );
+	return CPPUtil::distance( x1 + w1, y1 + h1, x2, y2 );
 }
 
-float CPP::distanceRectPoint( float pX, float pY, float rX, float rY, float rW, float rH )
+float CPPUtil::distanceRectPoint( float pX, float pY, float rX, float rY, float rW, float rH )
 {
 	if ( pX >= rX && pX <= rX + rW )
 	{
@@ -283,15 +273,25 @@ float CPP::distanceRectPoint( float pX, float pY, float rX, float rY, float rW, 
 	{
 		if ( pY > rY )
 		{
-			return distance( pX, pY, rX + rW, rY + rH );
+			return CPPUtil::distance( pX, pY, rX + rW, rY + rH );
 		}
-		return distance( pX, pY, rX + rW, rY );
+		return CPPUtil::distance( pX, pY, rX + rW, rY );
 	}
 	if ( pY > rY )
 	{
-		return distance( pX, pY, rX, rY + rH );
+		return CPPUtil::distance( pX, pY, rX, rY + rH );
 	}
-	return distance( pX, pY, rX, rY );
+	return CPPUtil::distance( pX, pY, rX, rY );
+}
+
+void CPPUtil::alphaOver( unsigned char r1, unsigned char g1, unsigned char b1, unsigned char a1,
+                         unsigned char r2, unsigned char g2, unsigned char b2, unsigned char a2,
+                         unsigned char& resR, unsigned char& resG, unsigned char& resB, unsigned char& resA )
+{
+	resR = ( ( r1 * a1 * 255 ) + ( ( r2 * a2 ) * ( 255 - a1 ) ) ) / 65025;
+	resG = ( ( g1 * a1 * 255 ) + ( ( g2 * a2 ) * ( 255 - a1 ) ) ) / 65025;
+	resB = ( ( b1 * a1 * 255 ) + ( ( b2 * a2 ) * ( 255 - a1 ) ) ) / 65025;
+	resA = ( ( a1 * 255 ) + ( a2 * ( 255 - a1 ) ) ) / 255;
 }
 
 CPPKeys::id CPP::getKeyID( int key )            // TODO: put in CPPKey?

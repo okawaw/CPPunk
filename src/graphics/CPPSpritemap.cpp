@@ -1,6 +1,7 @@
 #include "CPPSpritemap.h"
 
 #include "../CPP.h"
+#include "CPPBitmapData.h"
 
 #include "ofTexture.h"
 
@@ -9,7 +10,7 @@
 #include <stdlib.h>
 #include <utility>
 
-CPPSpritemap::CPPSpritemap( const std::string& source,
+CPPSpritemap::CPPSpritemap( const CPPBitmapData& source,
                             bool autoCleanup/* = false */,
                             unsigned int frameWidth/* = 0 */,
                             unsigned int frameHeight/* = 0 */ ) :

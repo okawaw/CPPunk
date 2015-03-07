@@ -51,10 +51,6 @@ public:
 
 	bool isAutoCleanup() const;
 
-	// TODO: remove these...
-	void addEntity( CPPBaseEntity* entity, bool quiet = false );
-	CPPBaseEntity* removeEntity( CPPBaseEntity* entity, bool quiet = false );
-
 	void updateEntityLayer( CPPBaseEntity* entity, int layer );
 
 	// Adds the Entity to the World at the end of the frame.

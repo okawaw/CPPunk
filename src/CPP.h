@@ -8,25 +8,42 @@
 #include "utils/CPPKey.h"
 
 #include "ofCamera.h"
-#include "ofTexture.h"
+#include "ofImage.h"
 
 #include <string>
+
+namespace CPPUtil
+{
+	float distance( float x1, float y1, float x2, float y2 );
+	float distanceRects( float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2 );
+
+	// Find the distance between a point and a rectangle. Returns 0 if the point is within the rectangle.
+	float distanceRectPoint( float pX, float pY, float rX, float rY, float rW, float rH );
+
+	// Compute the resulting RGBA pixel of pixel 1 over pixel 2 with the result
+	// stored in the components of res.
+	void alphaOver( unsigned char r1, unsigned char g1, unsigned char b1, unsigned char a1,
+	                unsigned char r2, unsigned char g2, unsigned char b2, unsigned char a2,
+	                unsigned char& resR, unsigned char& resG, unsigned char& resB, unsigned char& resA );
+}
 
 class CPP : public ofBaseApp
 {
 private:
+	friend class CPPBitmapData;
+
 	class CPPResourceManager
 	{
 	public:
 		CPPResourceManager();
 		~CPPResourceManager();
 
-		ofTexture* useTexture( const std::string& key );
+		ofImage* useTexture( const std::string& key );
 		void releaseTexture( const std::string& key );
 
-		// < resourceName, < ofTexturePointer, retainCount > >
-		std::map< std::string, std::pair< ofTexture*, unsigned int > > m_dataMap;
-		ofTexture* m_pErrorTexture;
+		// < resourceName, < ofImagePointer, retainCount > >
+		std::map< std::string, std::pair< ofImage*, unsigned int > > m_dataMap;
+		ofImage* m_pErrorTexture;
 	};
 
 public:
@@ -43,9 +60,6 @@ public:
 	void windowResized( int w, int h );
 	void dragEvent( ofDragInfo dragInfo );
 	void gotMessage( ofMessage msg );
-
-	static ofTexture* getTexture( const std::string& filename );
-	static void releaseTexture( const std::string& filename );
 
 	static CPPBaseWorld* getWorld();
 	static void setWorld( CPPBaseWorld* newWorld );
@@ -78,12 +92,6 @@ public:
 	static void setCameraX( float x );
 	static void setCameraY( float y );
 	static void setCameraPos( float x, float y );
-
-	static float distance( float x1, float y1, float x2, float y2 );
-	static float distanceRects( float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2 );
-
-	// Find the distance between a point and a rectangle. Returns 0 if the point is within the rectangle.
-	static float distanceRectPoint( float pX, float pY, float rX, float rY, float rW, float rH );
 
 private:
 	static CPPKeys::id getKeyID( int key );

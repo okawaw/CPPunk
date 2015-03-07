@@ -1,13 +1,12 @@
 #include "CPPImage.h"
 
 #include "ofGraphics.h"
-#include "ofTexture.h"
 
 #include "../CPP.h"
 
 #include <iostream>
 
-CPPImage::CPPImage( const std::string& source,
+CPPImage::CPPImage( const CPPBitmapData& source,
                     bool autoCleanup/* = false */,
                     bool useClipRect/* = false */,
                     float clipRectPosX/* = 0 */,
@@ -25,8 +24,8 @@ CPPImage::CPPImage( const std::string& source,
 , m_green( 255 )
 , m_blue( 255 )
 , m_alpha( 255 )
-, m_pTexture( CPP::getTexture( source ) )
-, m_source( source )
+, m_pTexture( source.m_pTexture )
+, m_bitmapData( source )
 , m_clipRectPosX( clipRectPosX )
 , m_clipRectPosY( clipRectPosY )
 , m_clipRectWidth( useClipRect
@@ -44,7 +43,6 @@ CPPImage::CPPImage( const std::string& source,
 
 CPPImage::~CPPImage()
 {
-	CPP::releaseTexture( m_source );
 }
 
 float CPPImage::getAngle() const { return m_angle; }
@@ -95,6 +93,7 @@ void CPPImage::draw( float x, float y )                                         
 		ofSetColor( m_red, m_blue, m_green );
 	}
 
+	// Render without transformations.
 	if ( m_angle == 0 && m_scaleX * m_scale == 1 && m_scaleY * m_scale == 1 )
 	{
 		m_pTexture->drawSubsection( x + m_posX - m_originX, y + m_posY - m_originY, // position
@@ -102,9 +101,10 @@ void CPPImage::draw( float x, float y )                                         
 		                            m_clipRectPosX, m_clipRectPosY,                 // clipping position
 		                            m_clipRectWidth, m_clipRectHeight);             // clipping dimensions
 	}
-	// Render without transformations.
+	// Render with transformations. TODO
 	else
 	{
+		// TODO: Should be drawSubsection().
 		m_pTexture->draw( x + m_posX - m_originX, y + m_posY - m_originY );           // TODO: transformations.
 	}
 

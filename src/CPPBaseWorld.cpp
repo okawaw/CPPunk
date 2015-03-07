@@ -122,42 +122,6 @@ void CPPBaseWorld::gotMessage( ofMessage msg )
 {
 }
 
-void CPPBaseWorld::addEntity( CPPBaseEntity* entity, bool quiet/* = false*/ ) // TODO: Can be safely renamed/repurposed.
-{
-	if ( m_entities.insert( entity ).second == false )
-	{
-		std::cerr << "ERROR: the entity is already in this World." << std::endl;
-		return;
-	}
-
-	// TODO: What if the entity is already part of a world?
-
-	entity->setWorld( this, m_entityKey );
-
-	if ( !quiet )
-	{
-		entity->added();
-	}
-}
-
-CPPBaseEntity* CPPBaseWorld::removeEntity( CPPBaseEntity* entity, bool quiet/* = false*/ ) // TODO: Can be safely renamed/repurposed.
-{
-	if ( m_entities.erase( entity ) != 1 )
-	{
-		std::cerr << "ERROR: this Entity is not in this World." << std::endl;
-		return NULL;
-	}
-
-	entity->setWorld( NULL, m_entityKey );
-
-	if ( !quiet )
-	{
-		entity->removed();
-	}
-
-	return entity;
-}
-
 bool CPPBaseWorld::isAutoCleanup() const { return m_bAutoCleanup; }
 
 void CPPBaseWorld::updateEntityLayer( CPPBaseEntity* entity, int layer )
@@ -272,7 +236,7 @@ CPPBaseEntity* CPPBaseWorld::collideLine( unsigned int type, int fromX, int from
 	{
 		precision = 1;
 	}
-	if ( CPP::distance( fromX, fromY, toX, toY ) < precision )
+	if ( CPPUtil::distance( fromX, fromY, toX, toY ) < precision )
 	{
 		if ( fromX == toX && fromY == toY )
 		{
@@ -403,7 +367,7 @@ CPPBaseEntity* CPPBaseWorld::collideLine( unsigned int type, int fromX, int from
 	{
 		precision = 1;
 	}
-	if ( CPP::distance( fromX, fromY, toX, toY ) < precision )
+	if ( CPPUtil::distance( fromX, fromY, toX, toY ) < precision )
 	{
 		return collidePoint( type, fromX, toY, except );
 	}

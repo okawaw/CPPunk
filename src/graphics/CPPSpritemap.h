@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+class CPPBitmapData;
+
 class CPPSpritemap : public CPPImage
 {
 private:
@@ -28,7 +30,7 @@ private:
 	};
 
 public:
-	CPPSpritemap( const std::string& source,
+	CPPSpritemap( const CPPBitmapData& source,
 	              bool autoCleanup = false,
 	              unsigned int frameWidth = 0,
 	              unsigned int frameHeight = 0 );

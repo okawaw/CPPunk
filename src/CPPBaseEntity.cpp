@@ -264,7 +264,7 @@ float CPPBaseEntity::distanceFrom( CPPBaseEntity* e, bool useHitboxes/* = false*
 		return sqrt( ( m_posX - e->m_posX ) * ( m_posX - e->m_posX ) + ( m_posY - e->m_posY ) * ( m_posY - e->m_posY ) );
 	}
 
-	return CPP::distanceRects( m_posX - m_originX, m_posY - m_originY, m_width, m_height, e->m_posX - e->m_originX, e->m_posY - e->m_originY, e->m_width, e->m_height );
+	return CPPUtil::distanceRects( m_posX - m_originX, m_posY - m_originY, m_width, m_height, e->m_posX - e->m_originX, e->m_posY - e->m_originY, e->m_width, e->m_height );
 }
 
 float CPPBaseEntity::distanceToPoint( float pX, float pY, bool useHitBox/* = false*/ ) const
@@ -274,12 +274,12 @@ float CPPBaseEntity::distanceToPoint( float pX, float pY, bool useHitBox/* = fal
 		return sqrt( ( m_posX - pX ) * ( m_posX - pX ) + ( m_posY - pY ) * ( m_posY - pY ) ); 
 	}
 
-	return CPP::distanceRectPoint( pX, pY, m_posX - m_originX, m_posY - m_originY, m_width, m_height );
+	return CPPUtil::distanceRectPoint( pX, pY, m_posX - m_originX, m_posY - m_originY, m_width, m_height );
 }
 
 float CPPBaseEntity::distanceToRect( float rX, float rY, float rWidth, float rHeight ) const
 {
-	return CPP::distanceRects( rX, rY, rWidth, rHeight, m_posX - m_originX, m_posY - m_originY, m_width, m_height);
+	return CPPUtil::distanceRects( rX, rY, rWidth, rHeight, m_posX - m_originX, m_posY - m_originY, m_width, m_height);
 }
 
 void CPPBaseEntity::moveBy( float x, float y, bool useSolidType/* = false*/, unsigned int solidType/* = 0*/, bool sweep/* = false*/ )
