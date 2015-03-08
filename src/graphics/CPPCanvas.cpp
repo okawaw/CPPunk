@@ -95,22 +95,23 @@ void CPPCanvas::fill( int rX, int rY, unsigned int rWidth, unsigned int rHeight,
 		return;
 	}
 
-	int rWidthI = rWidth;
-	int rHeightI = rHeight;
+	int aWidth = rWidth;
+	int aHeight = rHeight;
 
-	int fromDestX;
-	int toDestX;
-	int fromDestY;
-	int toDestY;
+	int destLeft = std::max( rX, 0 );
+	int destRight = std::min( rX + aWidth, m_texture.width );
+	int destTop = std::max( rY, 0 );
+	int destBottom = std::min( rY + aHeight, m_texture.height );
 
-	fromDestX = ( rX < 0 ) ? 0 : ( ( rX > m_texture.width ) ? m_texture.width : rX );
-	toDestX = ( rX + rWidthI < 0 ) ? 0 : ( ( rX + rWidthI > m_texture.width ) ? m_texture.width : rX + rWidthI );
+	if (    destLeft >= destRight
+	     || destTop >= destBottom )
+	{
+		// No overlap.
+		return;
+	}
 
-	fromDestY = ( rY < 0 ) ? 0 : ( ( rY > m_texture.height ) ? m_texture.height : rY );
-	toDestY = ( rY + rHeightI < 0 ) ? 0 : ( ( rY + rHeightI > m_texture.height ) ? m_texture.height : rY + rHeightI );
-
-	int destWidth = toDestX - fromDestX;
-	int destHeight = toDestY - fromDestY;
+	int destWidth = destRight - destLeft;
+	int destHeight = destBottom - destTop;
 
 	if ( destWidth == 0 || destHeight == 0 )
 	{
@@ -122,7 +123,7 @@ void CPPCanvas::fill( int rX, int rY, unsigned int rWidth, unsigned int rHeight,
 	int destItrX = BYTES_PER_PIXEL;
 	int destItrY = BYTES_PER_PIXEL * ( m_texture.width - destWidth );
 
-	unsigned char* d = &( m_texture.getPixels()[ BYTES_PER_PIXEL * ( ( fromDestY * m_texture.width ) + fromDestX ) ] );
+	unsigned char* d = &( m_texture.getPixels()[ BYTES_PER_PIXEL * ( ( destTop * m_texture.width ) + destLeft ) ] );
 
 	for ( int i = 0; i < destHeight; ++i, d += destItrY )
 	{
