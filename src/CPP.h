@@ -10,7 +10,11 @@
 #include "ofCamera.h"
 #include "ofImage.h"
 
+#include "ofTrueTypeFont.h"
+
 #include <string>
+#include <map>
+#include <utility>
 
 namespace CPPUtil
 {
@@ -27,10 +31,15 @@ namespace CPPUtil
 	                unsigned char& resR, unsigned char& resG, unsigned char& resB, unsigned char& resA );
 }
 
+// TODO: Make the CPP class a singleton with an "instance" that is
+//       invoked when static calls are made. No static members are
+//       necessary.
+
 class CPP : public ofBaseApp
 {
 private:
 	friend class CPPBitmapData;
+	friend class CPPText;
 
 	class CPPResourceManager
 	{
@@ -38,12 +47,20 @@ private:
 		CPPResourceManager();
 		~CPPResourceManager();
 
-		ofImage* useTexture( const std::string& key );
-		void releaseTexture( const std::string& key );
+		ofImage* useTexture( const std::string& fileName );
+		void releaseTexture( const std::string& fileName );
+
+		ofTrueTypeFont* useFont( const std::string& fontName, unsigned int fontSize, bool antiAliased );
+		void releaseFont( const std::string& fontName, unsigned int fontSize, bool antiAliased );
 
 		// < resourceName, < ofImagePointer, retainCount > >
-		std::map< std::string, std::pair< ofImage*, unsigned int > > m_dataMap;
+		std::map< std::string, std::pair< ofImage*, unsigned int > > m_textureMap;
+
+		// < < fontName, < fontSize, antiAliased > >, < ofTrueTypeFontPointer, retainCount > >
+		std::map< std::pair< std::string, std::pair< unsigned int, bool > >, std::pair< ofTrueTypeFont*, unsigned int > > m_fontMap;
+
 		ofImage* m_pErrorTexture;
+		ofTrueTypeFont* m_pErrorFont;
 	};
 
 public:
