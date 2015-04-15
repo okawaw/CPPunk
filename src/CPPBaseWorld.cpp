@@ -508,7 +508,7 @@ CPPBaseEntity* CPPBaseWorld::nearestToRect( unsigned int type, float x, float y,
 {
 	float nearDist = FLT_MAX;
 	float dist;
-	CPPBaseEntity* n;
+	CPPBaseEntity* n = NULL;
 
 	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
@@ -555,7 +555,7 @@ CPPBaseEntity* CPPBaseWorld::nearestToEntity( unsigned int type, const CPPBaseEn
 	float dist;
 	float x = e->getPosX() - e->getOriginX();
 	float y = e->getPosY() - e->getOriginY();
-	CPPBaseEntity* n;
+	CPPBaseEntity* n = NULL;
 
 	for ( std::set< CPPBaseEntity*, CPPBaseEntity::ptrCmp >::iterator i = m_entities.begin(); i != m_entities.end(); ++i )
 	{
@@ -598,7 +598,7 @@ CPPBaseEntity* CPPBaseWorld::nearestToPoint( unsigned int type, float x, float y
 {
 	float nearDist = FLT_MAX;
 	float dist;
-	CPPBaseEntity* n;
+	CPPBaseEntity* n = NULL;
 
 	if ( useHitBoxes )
 	{
