@@ -6,6 +6,8 @@
 #include "ofConstants.h"
 #include "ofUtils.h"
 
+#include <sstream>
+
 static const int CAMERA_Z = 100;
 
 static const std::string VERSION = "1.0.0";       // The CPPunk major version.
@@ -292,6 +294,16 @@ void CPPUtil::alphaOver( unsigned char r1, unsigned char g1, unsigned char b1, u
 	resG = ( ( g1 * a1 * 255 ) + ( ( g2 * a2 ) * ( 255 - a1 ) ) ) / 65025;
 	resB = ( ( b1 * a1 * 255 ) + ( ( b2 * a2 ) * ( 255 - a1 ) ) ) / 65025;
 	resA = ( ( a1 * 255 ) + ( a2 * ( 255 - a1 ) ) ) / 255;
+}
+
+void CPPUtil::split( const std::string& s, char delimiter, std::vector< std::string >& elements )
+{
+	std::stringstream ss( s );
+	std::string item;
+	while ( std::getline( ss, item, delimiter ) )
+	{
+		elements.push_back( item );
+	}
 }
 
 CPPKeys::id CPP::getKeyID( int key )            // TODO: put in CPPKey?

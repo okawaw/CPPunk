@@ -17,6 +17,7 @@ public:
 private:
 	friend class CPPImage;
 	friend class CPPCanvas;
+	friend class CPPTilemap;
 
 	ofImage* m_pTexture;
 	std::string m_source;

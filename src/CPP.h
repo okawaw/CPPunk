@@ -15,6 +15,7 @@
 #include <string>
 #include <map>
 #include <utility>
+#include <vector>
 
 namespace CPPUtil
 {
@@ -29,6 +30,8 @@ namespace CPPUtil
 	void alphaOver( unsigned char r1, unsigned char g1, unsigned char b1, unsigned char a1,
 	                unsigned char r2, unsigned char g2, unsigned char b2, unsigned char a2,
 	                unsigned char& resR, unsigned char& resG, unsigned char& resB, unsigned char& resA );
+
+	void split( const std::string& s, char delimiter, std::vector< std::string >& elements );
 }
 
 // TODO: Make the CPP class a singleton with an "instance" that is
