@@ -85,8 +85,8 @@ unsigned int CPPTilemap::getTile( unsigned int column, unsigned int row ) const
 }
 
 void CPPTilemap::setRect( unsigned int column, unsigned int row,
-              unsigned int width/* = 1*/, unsigned int height/* = 1*/,
-              unsigned int index/* = 0*/ )
+                          unsigned int width/* = 1*/, unsigned int height/* = 1*/,
+                          unsigned int index/* = 0*/ )
 {
 	if ( m_bUsePositions )
 	{

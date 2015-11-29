@@ -32,6 +32,8 @@ namespace CPPUtil
 	                unsigned char& resR, unsigned char& resG, unsigned char& resB, unsigned char& resA );
 
 	void split( const std::string& s, char delimiter, std::vector< std::string >& elements );
+
+	float trunc( float f );
 }
 
 // TODO: Make the CPP class a singleton with an "instance" that is

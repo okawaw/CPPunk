@@ -6,6 +6,7 @@
 #include "ofConstants.h"
 #include "ofUtils.h"
 
+#include <math.h> // trunc
 #include <sstream>
 
 static const int CAMERA_Z = 100;
@@ -304,6 +305,11 @@ void CPPUtil::split( const std::string& s, char delimiter, std::vector< std::str
 	{
 		elements.push_back( item );
 	}
+}
+
+float CPPUtil::trunc( float f )
+{
+	return ( f >= 0 ) ? floor( f ) : ceil( f );
 }
 
 CPPKeys::id CPP::getKeyID( int key )            // TODO: put in CPPKey?

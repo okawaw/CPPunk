@@ -69,7 +69,7 @@ public:
 	float getBottom() const;
 
 	CPPBaseWorld* getWorld() const;
-	void setWorld( CPPBaseWorld* const world, EntityKey& );
+	void setWorld( CPPBaseWorld* const world, EntityKey& ); // TODO: Make private with CPPBaseWorld a friend
 
 	bool isAutoCleanup() const;
 
