@@ -1,8 +1,10 @@
 #include "CPPStateHandler.h"
 
-#include "CPP.h"
+#include "CPPBaseWorld.h"
 
 #include <stdlib.h>
+
+CPPStateHandler* CPPStateHandler::ms_pInstance = NULL;
 
 CPPStateHandler::CPPStateHandler() :
   m_pCurWorld( NULL )
@@ -16,6 +18,25 @@ CPPStateHandler::~CPPStateHandler()
 	{
 		delete m_pCurWorld;
 	}
+}
+
+void CPPStateHandler::initialize()
+{
+	if ( !ms_pInstance )
+	{
+		ms_pInstance = new CPPStateHandler();
+	}
+}
+
+void CPPStateHandler::destroy()
+{
+	delete ms_pInstance;
+	ms_pInstance = NULL;
+}
+
+CPPStateHandler* CPPStateHandler::getInstance()
+{
+	return ms_pInstance;
 }
 
 CPPBaseWorld* CPPStateHandler::getWorld() const { return m_pCurWorld; }
@@ -51,33 +72,6 @@ void CPPStateHandler::changeWorld( CPPBaseWorld* newWorld )
 	m_pCurWorld->setup();
 }
 */
-
-void CPPStateHandler::checkWorld()
-{
-	if ( !m_pGoto )
-	{
-		return;
-	}
-
-	if ( m_pCurWorld )
-	{
-		m_pCurWorld->end();
-		m_pCurWorld->updateLists();
-
-		if ( m_pCurWorld->isAutoCleanup() )
-		{
-			delete m_pCurWorld;
-		}
-	}
-
-	m_pCurWorld = m_pGoto;
-	m_pGoto = NULL;
-
-	m_pCurWorld->updateLists();                              // TODO: NULL check?
-	m_pCurWorld->begin();
-	m_pCurWorld->setup();
-	m_pCurWorld->updateLists();
-}
 
 // All callbacks.
 
@@ -190,6 +184,33 @@ void CPPStateHandler::gotMessage( ofMessage msg )
 	{
 		m_pCurWorld->gotMessage( msg );
 	}
+}
+
+void CPPStateHandler::checkWorld()
+{
+	if ( !m_pGoto )
+	{
+		return;
+	}
+
+	if ( m_pCurWorld )
+	{
+		m_pCurWorld->end();
+		m_pCurWorld->updateLists();
+
+		if ( m_pCurWorld->isAutoCleanup() )
+		{
+			delete m_pCurWorld;
+		}
+	}
+
+	m_pCurWorld = m_pGoto;
+	m_pGoto = NULL;
+
+	m_pCurWorld->updateLists();                              // TODO: NULL check?
+	m_pCurWorld->begin();
+	m_pCurWorld->setup();
+	m_pCurWorld->updateLists();
 }
 
 /*

@@ -1,8 +1,8 @@
 #include "CPPText.h"
 
-#include "../CPP.h"
+#include "utils/CPPTextResourceManager.h"
 
-// TODO: Get these defaults and from CPPResourceManager from one location.
+// TODO: Get these defaults and from CPPTextResourceManager from one location.
 unsigned int CPPText::ms_size = 16;        // The font to assign to new CPPText objects.
 std::string CPPText::ms_font = "default";  // The font size to assign to new CPPText objects.
 bool CPPText::ms_bAntiAliased = true;      // The anti-aliasing property to assign to new CPPText objects.
@@ -11,7 +11,7 @@ float CPPText::ms_spaceSize = 1.0;         // The space size factor to assign to
 
 CPPText::CPPText( const std::string& text, bool autoCleanup/* = false*/, float offsetX/* = 0*/, float offsetY/* = 0*/ ) :
   CPPBaseImage( autoCleanup )
-, m_pTrueTypeFont( CPP::ms_resourceManager.useFont( ms_font, ms_size, ms_bAntiAliased ) )
+, m_pTrueTypeFont( CPPTextResourceManager::getInstance()->useFont( ms_font, ms_size, ms_bAntiAliased ) )
 , m_size( ms_size )
 , m_nextSize( m_size )
 , m_font( ms_font )
@@ -32,7 +32,7 @@ CPPText::CPPText( const std::string& text, bool autoCleanup/* = false*/, float o
 
 CPPText::~CPPText()
 {
-	CPP::ms_resourceManager.releaseFont( m_font, m_size, m_bAntiAliased );
+	CPPTextResourceManager::getInstance()->releaseFont( m_font, m_size, m_bAntiAliased );
 }
 
 unsigned int CPPText::getSize() const { return m_size; }
@@ -136,8 +136,8 @@ void CPPText::reloadFont()
 	}
 	if ( m_font != m_nextFont || m_size != m_nextSize || m_bAntiAliased != m_bNextAntiAliased )
 	{
-		CPP::ms_resourceManager.releaseFont( m_font, m_size, m_bAntiAliased );
-		m_pTrueTypeFont = CPP::ms_resourceManager.useFont( m_nextFont, m_nextSize, m_bNextAntiAliased );
+		CPPTextResourceManager::getInstance()->releaseFont( m_font, m_size, m_bAntiAliased );
+		m_pTrueTypeFont = CPPTextResourceManager::getInstance()->useFont( m_nextFont, m_nextSize, m_bNextAntiAliased );
 		m_font = m_nextFont;
 		m_size = m_nextSize;
 		m_bAntiAliased = m_bNextAntiAliased;

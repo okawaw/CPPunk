@@ -1,17 +1,20 @@
 #ifndef CPP_STATE_HANDLER_H_
 #define CPP_STATE_HANDLER_H_
 
-#include "CPPBaseWorld.h"
-//#include "GameState.h"
-//#include "StateDefs.h"
-
 #include "ofEvents.h"
+
+class CPPBaseWorld;
 
 class CPPStateHandler // TODO: Make it a private class of CPP
 {
-public:
+	friend class CPP; // TODO: ACTUALLY ^^ Make it a private class (maybe not a singleton anymore) that only CPP can create and own. Then make CPP a singleton. No more static functions or variables. Or remove entirely.
+private:
 	CPPStateHandler();
 	~CPPStateHandler();
+
+	static void initialize();
+	static void destroy();
+	static CPPStateHandler* getInstance();
 
 	CPPBaseWorld* getWorld() const;
 	void setWorld( CPPBaseWorld* const newWorld );
@@ -34,12 +37,15 @@ public:
 	void dragEvent( ofDragInfo dragInfo );
 	void gotMessage( ofMessage msg );
 
-private:
 	void checkWorld();
 
-	/*static*/ CPPBaseWorld* m_pCurWorld;      // Current World object pointer.
-
+	CPPBaseWorld* m_pCurWorld;                 // Current World object pointer.
 	CPPBaseWorld* m_pGoto;                     // World to switch to.
+
+	static CPPStateHandler* ms_pInstance;
+
+	CPPStateHandler( const CPPStateHandler& );
+	CPPStateHandler& operator=( const CPPStateHandler& );
 };
 
 #endif

@@ -1,6 +1,9 @@
 #include "CPP.h"
 
+#include "CPPStateHandler.h"
 #include "utils/CPPInput.h"
+#include "graphics/utils/CPPTextResourceManager.h"
+#include "graphics/utils/CPPBitmapDataResourceManager.h"
 
 #include "ofAppRunner.h"
 #include "ofConstants.h"
@@ -28,9 +31,26 @@ unsigned int CPP::ms_assignedFrameRate;           // Desired frame rate of the g
 
 CPP::CPPResourceManager CPP::ms_resourceManager;  // Static resource manager.
 
-CPPStateHandler CPP::ms_stateHandler;             // Static state handler.
+//CPPStateHandler CPP::ms_stateHandler;             // Static state handler. TODO: should be absorbed by CPP.
 
 ofCamera CPP::ms_camera;                          // Camera for the game.
+
+CPP::CPP() :
+  ofBaseApp()
+{
+	// Create "globals"
+	CPPBitmapDataResourceManager::initialize();
+	CPPTextResourceManager::initialize();
+	CPPStateHandler::initialize();
+}
+
+CPP::~CPP()
+{
+	// Tear down "globals"
+	CPPStateHandler::destroy();
+	CPPTextResourceManager::destroy();
+	CPPBitmapDataResourceManager::destroy();
+}
 
 //--------------------------------------------------------------
 void CPP::setup()
@@ -56,7 +76,7 @@ void CPP::update()
 {
 	if ( !ms_bPaused )
 	{
-		ms_stateHandler.update();
+		CPPStateHandler::getInstance()->update();
 	}
 
 	CPPInput::update();
@@ -69,7 +89,7 @@ void CPP::draw()
 
 	if ( !ms_bPaused )                         // TODO: pausing the render results in nothing being drawn...fix this...
 	{
-		ms_stateHandler.draw();
+		CPPStateHandler::getInstance()->draw();
 	}
 
 	ms_camera.end();
@@ -80,7 +100,7 @@ void CPP::keyPressed( int key )
 {
 	const CPPKeys::id keyPressed = getKeyID( key );
 	CPPInput::onKeyDown( keyPressed );
-	ms_stateHandler.keyPressed( key );
+	CPPStateHandler::getInstance()->keyPressed( key );
 }
 
 //--------------------------------------------------------------
@@ -88,31 +108,31 @@ void CPP::keyReleased( int key )
 {
 	const CPPKeys::id keyReleased = getKeyID( key );
 	CPPInput::onKeyUp( keyReleased );
-	ms_stateHandler.keyReleased( key );
+	CPPStateHandler::getInstance()->keyReleased( key );
 }
 
 //--------------------------------------------------------------
 void CPP::mouseMoved( int x, int y )
 {
-	ms_stateHandler.mouseMoved( x, y );
+	CPPStateHandler::getInstance()->mouseMoved( x, y );
 }
 
 //--------------------------------------------------------------
 void CPP::mouseDragged( int x, int y, int button )
 {
-	ms_stateHandler.mouseDragged( x, y, button );
+	CPPStateHandler::getInstance()->mouseDragged( x, y, button );
 }
 
 //--------------------------------------------------------------
 void CPP::mousePressed( int x, int y, int button )
 {
-	ms_stateHandler.mousePressed( x, y, button );
+	CPPStateHandler::getInstance()->mousePressed( x, y, button );
 }
 
 //--------------------------------------------------------------
 void CPP::mouseReleased( int x, int y, int button )
 {
-	ms_stateHandler.mouseReleased( x, y, button );
+	CPPStateHandler::getInstance()->mouseReleased( x, y, button );
 }
 
 //--------------------------------------------------------------
@@ -121,27 +141,27 @@ void CPP::windowResized( int w, int h )
 	// HACK: Somehow prevent resizing.
 	ofSetWindowShape( ms_width, ms_height );
 
-	ms_stateHandler.windowResized( w, h );
+	CPPStateHandler::getInstance()->windowResized( w, h );
 }
 
 //--------------------------------------------------------------
 void CPP::gotMessage( ofMessage msg )
 {
-	ms_stateHandler.gotMessage( msg );
+	CPPStateHandler::getInstance()->gotMessage( msg );
 }
 
 //--------------------------------------------------------------
 void CPP::dragEvent( ofDragInfo dragInfo )
 { 
-	ms_stateHandler.dragEvent( dragInfo );
+	CPPStateHandler::getInstance()->dragEvent( dragInfo );
 }
 
-CPPBaseWorld* CPP::getWorld() { return ms_stateHandler.getWorld(); }
+CPPBaseWorld* CPP::getWorld() { return CPPStateHandler::getInstance()->getWorld(); }
 
 void CPP::setWorld( CPPBaseWorld* newWorld )
 {
-	// ms_stateHandler.changeWorld( newWorld );       // old TODO: REMOVE
-	ms_stateHandler.setWorld( newWorld );
+	// CPPStateHandler::getInstance()->changeWorld( newWorld );       // old TODO: REMOVE
+	CPPStateHandler::getInstance()->setWorld( newWorld );
 }
 
 bool CPP::getPaused() { return ms_bPaused; }

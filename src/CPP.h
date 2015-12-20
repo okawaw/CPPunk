@@ -3,7 +3,6 @@
 
 #include "ofBaseApp.h"
 
-#include "CPPStateHandler.h"
 #include "CPPBaseWorld.h"
 #include "utils/CPPKey.h"
 
@@ -69,6 +68,9 @@ private:
 	};
 
 public:
+	CPP();
+	~CPP();
+
 	void setup();
 	void update();
 	void draw();
@@ -131,9 +133,9 @@ private:
 
 	static unsigned int ms_assignedFrameRate;          // Desired frame rate of the game.
 
-	static CPPResourceManager ms_resourceManager;      // ResourceManager for the game.
+	static CPPResourceManager ms_resourceManager;      // ResourceManager for the game. // TODO: remove
 
-	static CPPStateHandler ms_stateHandler;            // StateHandler for the game.
+	//static CPPStateHandler ms_stateHandler;            // StateHandler for the game. TODO: should be absorbed by CPP.
 
 	static ofCamera ms_camera;                         // Camera for the game.
 };
