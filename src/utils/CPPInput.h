@@ -26,10 +26,10 @@ public:
 	static void clear();
 
 	// Event handler called by CPP's event handler.
-	static void onKeyDown( CPPKeys::id key );
+	static void onKeyDown( int key );
 
 	// Event handler called by CPP's event handler.
-	static void onKeyUp( CPPKeys::id key );
+	static void onKeyUp( int key );
 
 
 private:

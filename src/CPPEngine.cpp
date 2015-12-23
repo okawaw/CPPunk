@@ -10,7 +10,8 @@ void CPPEngine::init( CPPBaseWorld* world, unsigned int width, unsigned int heig
 	ofAppGlutWindow window;
 	ofSetupOpenGL( &window, width, height, OF_WINDOW ); // Set up the GL context
 	
-	CPP* cpp = new CPP();
+	CPP::initialize();
+	CPP* cpp = CPP::getInstance();
 
 	CPP::setWorld( world );
 

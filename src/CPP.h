@@ -3,18 +3,12 @@
 
 #include "ofBaseApp.h"
 
-#include "CPPBaseWorld.h"
-#include "utils/CPPKey.h"
-
 #include "ofCamera.h"
-#include "ofImage.h"
 
-#include "ofTrueTypeFont.h"
+#include <string> // CPPUtil
+#include <vector> // CPPUtil
 
-#include <string>
-#include <map>
-#include <utility>
-#include <vector>
+class CPPBaseWorld;
 
 namespace CPPUtil
 {
@@ -41,31 +35,9 @@ namespace CPPUtil
 
 class CPP : public ofBaseApp
 {
-private:
-	friend class CPPBitmapData;
-	friend class CPPText;
-
-	class CPPResourceManager
-	{
-	public:
-		CPPResourceManager();
-		~CPPResourceManager();
-
-		ofImage* useTexture( const std::string& fileName );
-		void releaseTexture( const std::string& fileName );
-
-		ofTrueTypeFont* useFont( const std::string& fontName, unsigned int fontSize, bool antiAliased );
-		void releaseFont( const std::string& fontName, unsigned int fontSize, bool antiAliased );
-
-		// < resourceName, < ofImagePointer, retainCount > >
-		std::map< std::string, std::pair< ofImage*, unsigned int > > m_textureMap;
-
-		// < < fontName, < fontSize, antiAliased > >, < ofTrueTypeFontPointer, retainCount > >
-		std::map< std::pair< std::string, std::pair< unsigned int, bool > >, std::pair< ofTrueTypeFont*, unsigned int > > m_fontMap;
-
-		ofImage* m_pErrorTexture;
-		ofTrueTypeFont* m_pErrorFont;
-	};
+public:
+	static void initialize();  // TODO: add CPPEngine functionality
+	static CPP* getInstance(); // TODO: remove
 
 public:
 	CPP();
@@ -118,8 +90,6 @@ public:
 	static void setCameraPos( float x, float y );
 
 private:
-	static CPPKeys::id getKeyID( int key );
-
 	static bool ms_bPaused;                            // If the game should stop updating/rendering.
 
 	static bool ms_bFixed;                             // If the game is running at a fixed framerate.
@@ -133,11 +103,14 @@ private:
 
 	static unsigned int ms_assignedFrameRate;          // Desired frame rate of the game.
 
-	static CPPResourceManager ms_resourceManager;      // ResourceManager for the game. // TODO: remove
-
 	//static CPPStateHandler ms_stateHandler;            // StateHandler for the game. TODO: should be absorbed by CPP.
 
 	static ofCamera ms_camera;                         // Camera for the game.
+
+	static CPP* ms_pInstance;
+
+	CPP( const CPP& );
+	CPP& operator=( const CPP& );
 };
 
 #endif
