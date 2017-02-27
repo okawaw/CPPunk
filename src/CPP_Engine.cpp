@@ -20,6 +20,7 @@ CPP_Engine::CPP_Engine(const unsigned int width, const unsigned int height, cons
 , maxElapsed{0.0333}
 , maxFrameSkip{5u}
 , tickRate{4u}
+, running{false}
 , frameListSum{std::chrono::steady_clock::duration::zero()}
 {
 	// Global game properties.
@@ -53,6 +54,8 @@ CPP_Engine::CPP_Engine(const unsigned int width, const unsigned int height, cons
 
 void CPP_Engine::start()
 {
+	running = true;
+	
 	// Switch worlds.
 	if (cpp.gotoWorld)
 	{
@@ -62,22 +65,18 @@ void CPP_Engine::start()
 	// Game start.
 	init();
 	
-	while(true)
+	
+	// Start game loop.
+	
+	while(running)
 	{
-		// Start game loop.
-		if (cpp.isFixed())
-		{
-			// Fixed framerate.
-			// TODO: Implement this better.
-			std::this_thread::sleep_for(cpp.assignedFrameTime);
-			gameLoop();
-		}
-		else
-		{
-			// Nonfixed framerate.
-			gameLoop();
-		}
+		gameLoop();
 	}
+}
+
+void CPP_Engine::end()
+{
+	running = false;
 }
 
 void CPP_Engine::init()
@@ -85,6 +84,35 @@ void CPP_Engine::init()
 }
 
 void CPP_Engine::gameLoop()
+{
+	if (cpp.isFixed())
+	{
+		// Fixed framerate.
+		// TODO: Implement this better.
+		std::this_thread::sleep_for(cpp.assignedFrameTime);
+		fixedFramerateGameLoop();
+	}
+	else
+	{
+		// Nonfixed framerate.
+		framerateIndependentGameLoop();
+	}
+}
+
+void CPP_Engine::framerateIndependentGameLoop()
+{
+	// TODO: Finish this.
+	if (!paused)
+	{
+		update();
+	}
+	if (!paused)
+	{
+		render();
+	}
+}
+
+void CPP_Engine::fixedFramerateGameLoop()
 {
 	// TODO: Finish this.
 	if (!paused)
@@ -163,6 +191,11 @@ void CPP_Engine::focusLost()
 void CPP_Engine::setBitmapDataFactory(std::unique_ptr<CPP_BitmapDataFactoryIF> bitmapDataFactory)
 {
 	cpp.bitmapDataFactory = std::move(bitmapDataFactory);
+}
+
+void CPP_Engine::setInput(std::unique_ptr<CPP_Input> input)
+{
+	cpp.input = std::move(input);
 }
 
 void CPP_Engine::checkWorld()

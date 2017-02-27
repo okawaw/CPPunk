@@ -10,6 +10,7 @@
 #define CPP_h
 
 #include "CPP_BitmapDataFactoryIF.h"
+#include "CPP_Input.h"
 #include "CPP_Point.h"
 #include "CPP_Rectangle.h"
 
@@ -203,6 +204,7 @@ public:
 	
 private:
 	std::unique_ptr<CPP_BitmapDataFactoryIF> bitmapDataFactory;
+	std::unique_ptr<CPP_Input> input;
 	
 	std::shared_ptr<CPP_World> world;
 	std::shared_ptr<CPP_World> gotoWorld;

@@ -16,6 +16,7 @@
 #include <queue>
 
 class CPP_BitmapDataFactoryIF;
+class CPP_Input;
 
 class CPP_Engine
 {
@@ -32,6 +33,8 @@ public:
 	unsigned int tickRate;
 	
 	void start();
+	
+	void end();
 	
 	virtual void init();
 	
@@ -51,12 +54,23 @@ public:
 
 protected:
 	void setBitmapDataFactory(std::unique_ptr<CPP_BitmapDataFactoryIF> bitmapDataFactory);
+	void setInput(std::unique_ptr<CPP_Input> input);
 	
 	CPP cpp;
 	
 private:
+	void framerateIndependentGameLoop();
+	void fixedFramerateGameLoop();
+	
 	void checkWorld();
 	
+	bool running;
+	
+	// Timing information.
+	std::chrono::steady_clock::time_point time; // TODO: Continue here. Don't default construct!
+	std::chrono::steady_clock::time_point last; // TODO: Continue here. Don't default construct!
+	
+	// Framerate tracking.
 	std::chrono::steady_clock::time_point frameLast; // Should be set to 0 initially, or something equivalent. Don't default construct!
 	std::chrono::steady_clock::duration frameListSum; // Should be set to be equal to the frameLast if the frameList is empty. Don't default construct!
 	std::queue<std::chrono::steady_clock::duration> frameList;
