@@ -28,6 +28,8 @@ public:
 	
 	virtual void gameLoop() override;
 	
+	virtual void render() override;
+	
 protected:
 	std::string name;
 	std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window;

@@ -44,7 +44,7 @@ private:
 	// TODO: Maybe remove assignedFrameRate and favor using assignedFrameTime.
 	std::chrono::steady_clock::duration assignedFrameTime;
 	double assignedFrameRate;
-	double elapsed;
+	std::chrono::steady_clock::duration elapsed;
 	double rate;
 	CPP_Rectangle bounds;
 	CPP_Point camera;
@@ -214,10 +214,10 @@ private:
 	// TODO: Time information, some should be public or friend acquired though...
 	std::chrono::steady_clock::time_point _time;
 public:
-	std::chrono::steady_clock::time_point _updateTime;
-	std::chrono::steady_clock::time_point _renderTime;
-	std::chrono::steady_clock::time_point _gameTime;
-	std::chrono::steady_clock::time_point _flashTime; // TODO: See if I actually need this...
+	std::chrono::steady_clock::duration updateTime;
+	std::chrono::steady_clock::duration renderTime;
+	std::chrono::steady_clock::duration gameTime;
+	std::chrono::steady_clock::duration flashTime; // TODO: See if I actually need this...
 private:
 	
 	// TODO: Volume control.

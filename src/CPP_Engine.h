@@ -26,11 +26,11 @@ public:
 	
 	bool paused;
 	
-	double maxElapsed;
+	std::chrono::steady_clock::duration maxElapsed;
 	
 	unsigned int maxFrameSkip;
 	
-	unsigned int tickRate;
+	std::chrono::steady_clock::duration tickRate;
 	
 	void start();
 	
@@ -67,8 +67,13 @@ private:
 	bool running;
 	
 	// Timing information.
-	std::chrono::steady_clock::time_point time; // TODO: Continue here. Don't default construct!
-	std::chrono::steady_clock::time_point last; // TODO: Continue here. Don't default construct!
+	std::chrono::steady_clock::duration delta;
+	std::chrono::steady_clock::time_point last;
+	std::chrono::steady_clock::duration skip;
+	std::chrono::steady_clock::time_point timerPrev;
+	
+	// Debug timing information.
+	std::chrono::steady_clock::time_point flashTime;
 	
 	// Framerate tracking.
 	std::chrono::steady_clock::time_point frameLast; // Should be set to 0 initially, or something equivalent. Don't default construct!

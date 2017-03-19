@@ -12,16 +12,22 @@
 #include "CPP_World.h"
 
 #include <random>
-#include <thread>
 #include <utility>
 
 CPP_Engine::CPP_Engine(const unsigned int width, const unsigned int height, const double frameRate, const bool fixed) :
   paused{false}
-, maxElapsed{0.0333}
+, maxElapsed{std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<double>{1.0 / 30.0})}
 , maxFrameSkip{5u}
-, tickRate{4u}
+, tickRate{std::chrono::milliseconds{4u}}
 , running{false}
+, delta{std::chrono::steady_clock::duration::zero()}
+, last{}
+, skip{std::chrono::steady_clock::duration::zero()}
+, timerPrev{}
+, flashTime{}
+, frameLast{}
 , frameListSum{std::chrono::steady_clock::duration::zero()}
+, frameList{}
 {
 	// Global game properties.
 	cpp.width = width;
@@ -65,8 +71,17 @@ void CPP_Engine::start()
 	// Game start.
 	init();
 	
-	
 	// Start game loop.
+	if (cpp.isFixed())
+	{
+		skip = cpp.assignedFrameTime * (maxFrameSkip + 1u);
+	}
+	
+	{
+		const auto time = CPP::getTimer();
+		last = time;
+		timerPrev = time;
+	}
 	
 	while(running)
 	{
@@ -87,42 +102,143 @@ void CPP_Engine::gameLoop()
 {
 	if (cpp.isFixed())
 	{
-		// Fixed framerate.
-		// TODO: Implement this better.
-		std::this_thread::sleep_for(cpp.assignedFrameTime);
 		fixedFramerateGameLoop();
 	}
 	else
 	{
-		// Nonfixed framerate.
 		framerateIndependentGameLoop();
 	}
 }
 
 void CPP_Engine::framerateIndependentGameLoop()
 {
-	// TODO: Finish this.
+	// Execute at the assigned framerate.
+	const auto time0 = CPP::getTimer();
+	if ((time0 - timerPrev) < cpp.assignedFrameTime)
+	{
+		return;
+	}
+	
+	timerPrev = time0;
+	
+	// Update timer.
+	const auto time1 = CPP::getTimer();
+	const auto gameTime = time1;
+	cpp.flashTime = time1 - flashTime;
+	const auto updateTime = time1;
+	cpp.elapsed = (time1 - last);
+	if (cpp.elapsed > maxElapsed)
+	{
+		cpp.elapsed = maxElapsed;
+	}
+	
+	cpp.elapsed = std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<double>{cpp.elapsed} * cpp.rate);
+	last = time1;
+	
+	// TODO: Update console.
+	
+	// Update loop.
 	if (!paused)
 	{
 		update();
 	}
+	
+	// Update input.
+	if (cpp.input)
+	{
+		cpp.input->update();
+	}
+	
+	// Update timer.
+	const auto time2 = CPP::getTimer();
+	const auto renderTime = time2;
+	cpp.updateTime = time2 - updateTime;
+	
+	// Render loop.
 	if (!paused)
 	{
 		render();
 	}
+	
+	// Update timer.
+	const auto time3 = CPP::getTimer();
+	flashTime = time3;
+	cpp.renderTime = time3 - renderTime;
+	cpp.gameTime = time3 - gameTime;
 }
 
 void CPP_Engine::fixedFramerateGameLoop()
 {
-	// TODO: Finish this.
-	if (!paused)
+	// Execute at the assigned tick rate.
+	const auto time0 = CPP::getTimer();
+	if ((time0 - timerPrev) < tickRate)
 	{
-		update();
+		return;
 	}
+	
+	// Update timer.
+	const auto time1 = CPP::getTimer();
+	delta += (time1 - last);
+	last = time1;
+	
+	// Quit if a frame hasn't passed.
+	if (delta < cpp.assignedFrameTime)
+	{
+		return;
+	}
+	
+	// Update timer.
+	const auto gameTime = time1;
+	cpp.flashTime = time1 - flashTime;
+	
+	// TODO: Update console.
+	
+	// Update loop.
+	if (delta > skip)
+	{
+		delta = skip;
+	}
+	while (delta >= cpp.assignedFrameTime)
+	{
+		cpp.elapsed = std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<double>{cpp.assignedFrameTime} * cpp.rate);
+		
+		// Update timer.
+		const auto updateTime = time1;
+		delta -= cpp.assignedFrameTime;
+		
+		// Update loop.
+		if (!paused)
+		{
+			update();
+		}
+		
+		// Update input.
+		if (cpp.input)
+		{
+			cpp.input->update();
+		}
+		
+		// Update timer.
+		const auto time3 = CPP::getTimer();
+		cpp.updateTime = time3 - updateTime;
+	}
+	
+	const auto time4 = CPP::getTimer();
+	const auto renderTime = time4;
+	
+	// Render loop.
 	if (!paused)
 	{
 		render();
 	}
+	
+	// Update timer.
+	const auto time5 = CPP::getTimer();
+	flashTime = time5;
+	cpp.renderTime = time5 - renderTime;
+	cpp.gameTime = time5 - gameTime;
+	
+	timerPrev = CPP::getTimer();
 }
 
 void CPP_Engine::update()

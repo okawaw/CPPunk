@@ -29,10 +29,14 @@ CPP::CPP() :
 , frameRate{0.0}
 , assignedFrameTime{std::chrono::steady_clock::duration::zero()}
 , assignedFrameRate{0.0}
-, elapsed{0.0}
+, elapsed{std::chrono::steady_clock::duration::zero()}
 , rate{1.0}
 , focused{true}
 , engine{nullptr}
+, updateTime{std::chrono::steady_clock::duration::zero()}
+, renderTime{std::chrono::steady_clock::duration::zero()}
+, gameTime{std::chrono::steady_clock::duration::zero()}
+, flashTime{std::chrono::steady_clock::duration::zero()}
 , _volume{0.0}
 , _pan{0.0}
 , _getSeed{std::minstd_rand0::default_seed}
@@ -98,7 +102,7 @@ double CPP::getAssignedFrameRate() const
 
 double CPP::getElapsed() const
 {
-	return elapsed;
+	return std::chrono::duration<double>{elapsed}.count();
 }
 
 double CPP::getRate() const

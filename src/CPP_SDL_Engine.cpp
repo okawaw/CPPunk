@@ -47,9 +47,14 @@ void CPP_SDL_Engine::gameLoop()
 		}
 	}
 	
-	SDL_RenderClear(renderer.get());
-	
 	CPP_Engine::gameLoop();
+}
+
+void CPP_SDL_Engine::render()
+{
+	SDL_RenderClear(renderer.get());
+
+	CPP_Engine::render();
 	
 	SDL_RenderPresent(renderer.get());
 }
