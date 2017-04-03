@@ -9,6 +9,7 @@
 #include "CPP_SDL_Engine.h"
 
 #include "CPP_SDL_BitmapDataFactory.h"
+#include "CPP_SDL_Renderer.h"
 
 #include <utility>
 
@@ -16,9 +17,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 
-CPP_SDL_Engine::CPP_SDL_Engine(std::string name, const unsigned int width, const unsigned int height, const double frameRate, bool fixed) :
-  CPP_Engine{width, height, frameRate, fixed}
-, name{std::move(name)}
+CPP_SDL_Engine::CPP_SDL_Engine(std::string title, const unsigned int width, const unsigned int height, const double frameRate, bool fixed) :
+  CPP_Engine{std::move(title), width, height, frameRate, fixed}
 , window{nullptr, SDL_DestroyWindow}
 , renderer{nullptr, SDL_DestroyRenderer}
 {
@@ -30,9 +30,10 @@ void CPP_SDL_Engine::init()
 	
 	SDL_Init(SDL_INIT_EVERYTHING);
 	IMG_Init(IMG_INIT_PNG);
-	window.reset(SDL_CreateWindow(name.c_str(), 0, 0, static_cast<int>(cpp.getWidth()), static_cast<int>(cpp.getHeight()), SDL_WINDOW_SHOWN));
+	window.reset(SDL_CreateWindow(cpp.getTitle().c_str(), 0, 0, static_cast<int>(cpp.getWidth()), static_cast<int>(cpp.getHeight()), SDL_WINDOW_SHOWN));
 	renderer.reset(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 	
+	CPP_Engine::renderer = std::make_unique<CPP_SDL_Renderer>(renderer.get());
 	setBitmapDataFactory(std::make_unique<CPP_SDL_BitmapDataFactory>(renderer.get()));
 }
 
@@ -48,13 +49,4 @@ void CPP_SDL_Engine::gameLoop()
 	}
 	
 	CPP_Engine::gameLoop();
-}
-
-void CPP_SDL_Engine::render()
-{
-	SDL_RenderClear(renderer.get());
-
-	CPP_Engine::render();
-	
-	SDL_RenderPresent(renderer.get());
 }

@@ -19,6 +19,7 @@ using std::string_literals::operator""s;
 // TODO: Make sure all member variables are initialized in the CORRECT ORDER.
 CPP::CPP() :
   VERSION{"1.0.0"s}
+, title{"untitled"s}
 , width{0u}
 , height{0u}
 , halfWidth{0.0}
@@ -46,6 +47,11 @@ CPP::CPP() :
 std::string CPP::getVersion() const
 {
 	return VERSION;
+}
+
+std::string CPP::getTitle() const
+{
+	return title;
 }
 
 unsigned int CPP::getWidth() const

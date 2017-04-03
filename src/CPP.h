@@ -32,6 +32,7 @@ class CPP
 	// TODO: Reorganize this.
 private:
 	const std::string VERSION;
+	std::string title;
 	unsigned int width;
 	unsigned int height;
 	double halfWidth;
@@ -57,6 +58,9 @@ public:
 	
 	// The CPPunk major version.
 	std::string getVersion() const;
+	
+	// Title of the game.
+	std::string getTitle() const;
 	
 	// Width of the game.
 	unsigned int getWidth() const;

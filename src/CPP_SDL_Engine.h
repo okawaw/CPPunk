@@ -20,7 +20,7 @@ class SDL_Window;
 class CPP_SDL_Engine : public CPP_Engine
 {
 public:
-	CPP_SDL_Engine(std::string name, unsigned int width, unsigned int height, double frameRate=60.0, bool fixed=false);
+	CPP_SDL_Engine(std::string title, unsigned int width, unsigned int height, double frameRate=60.0, bool fixed=false);
 	virtual ~CPP_SDL_Engine() = default;
 	// TODO: Other constructors?
 	
@@ -28,10 +28,7 @@ public:
 	
 	virtual void gameLoop() override;
 	
-	virtual void render() override;
-	
 protected:
-	std::string name;
 	std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window;
 	std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer;
 };

@@ -14,7 +14,7 @@
 #include <random>
 #include <utility>
 
-CPP_Engine::CPP_Engine(const unsigned int width, const unsigned int height, const double frameRate, const bool fixed) :
+CPP_Engine::CPP_Engine(std::string title, const unsigned int width, const unsigned int height, const double frameRate, const bool fixed) :
   paused{false}
 , maxElapsed{std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<double>{1.0 / 30.0})}
 , maxFrameSkip{5u}
@@ -30,6 +30,7 @@ CPP_Engine::CPP_Engine(const unsigned int width, const unsigned int height, cons
 , frameList{}
 {
 	// Global game properties.
+	cpp.title = std::move(title);
 	cpp.width = width;
 	cpp.height = height;
 	cpp.halfWidth = static_cast<double>(width) / 2.0;
@@ -268,32 +269,38 @@ void CPP_Engine::update()
 
 void CPP_Engine::render()
 {
-	// Timing stuff.
-	if (frameLast == std::chrono::steady_clock::time_point{})
+	if (renderer)
 	{
-		frameLast = CPP::getTimer();
+		renderer->render([this]()
+		{
+			// Timing stuff.
+			if (frameLast == std::chrono::steady_clock::time_point{})
+			{
+				frameLast = CPP::getTimer();
+			}
+			
+			// Render loop.
+			if (cpp.world->isVisible())
+			{
+				cpp.world->render();
+			}
+			
+			// More timing stuff.
+			const auto t = CPP::getTimer();
+			frameList.emplace(t - frameLast);
+			frameListSum += frameList.back();
+			
+			if (frameList.size() > 120u)
+			{
+				frameListSum -= frameList.front();
+				frameList.pop();
+			}
+			
+			cpp.frameTime = frameListSum / frameList.size();
+			cpp.frameRate = 1.0 / std::chrono::duration<double>{cpp.frameTime}.count();
+			frameLast = t;
+		});
 	}
-	
-	// Render loop.
-	if (cpp.world->isVisible())
-	{
-		cpp.world->render();
-	}
-	
-	// More timing stuff.
-	const auto t = CPP::getTimer();
-	frameList.emplace(t - frameLast);
-	frameListSum += frameList.back();
-	
-	if (frameList.size() > 120u)
-	{
-		frameListSum -= frameList.front();
-		frameList.pop();
-	}
-	
-	cpp.frameTime = frameListSum / frameList.size();
-	cpp.frameRate = 1.0 / std::chrono::duration<double>{cpp.frameTime}.count();
-	frameLast = t;
 }
 
 void CPP_Engine::focusGained()

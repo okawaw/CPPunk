@@ -10,10 +10,12 @@
 #define CPP_Engine_h
 
 #include "CPP.h"
+#include "CPP_RendererIF.h"
 
 #include <chrono>
 #include <memory>
 #include <queue>
+#include <string>
 
 class CPP_BitmapDataFactoryIF;
 class CPP_Input;
@@ -21,7 +23,7 @@ class CPP_Input;
 class CPP_Engine
 {
 public:
-	CPP_Engine(unsigned int width, unsigned int height, double frameRate=60.0, bool fixed=false);
+	CPP_Engine(std::string title, unsigned int width, unsigned int height, double frameRate=60.0, bool fixed=false);
 	virtual ~CPP_Engine() = default;
 	
 	bool paused;
@@ -57,6 +59,7 @@ protected:
 	void setInput(std::unique_ptr<CPP_Input> input);
 	
 	CPP cpp;
+	std::unique_ptr<CPP_RendererIF> renderer;
 	
 private:
 	void framerateIndependentGameLoop();
