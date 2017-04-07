@@ -9,7 +9,8 @@
 #include "CPP_SDL_Engine.h"
 
 #include "CPP_SDL_BitmapDataFactory.h"
-#include "CPP_SDL_Renderer.h"
+#include "CPP_SDL_InputImpl.h"
+#include "CPP_SDL_RendererImpl.h"
 
 #include <utility>
 
@@ -33,20 +34,28 @@ void CPP_SDL_Engine::init()
 	window.reset(SDL_CreateWindow(cpp.getTitle().c_str(), 0, 0, static_cast<int>(cpp.getWidth()), static_cast<int>(cpp.getHeight()), SDL_WINDOW_SHOWN));
 	renderer.reset(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 	
-	CPP_Engine::renderer = std::make_unique<CPP_SDL_Renderer>(renderer.get());
-	setBitmapDataFactory(std::make_unique<CPP_SDL_BitmapDataFactory>(renderer.get()));
-}
-
-void CPP_SDL_Engine::gameLoop()
-{
-	SDL_Event e;
-	while (SDL_PollEvent(&e))
+	// Renderer
 	{
-		if (e.type == SDL_QUIT)
+		auto object = std::make_unique<CPP_SDL_RendererImpl>(*renderer, [this]()
 		{
-			end();
-		}
+			render();
+		});
+		rendererImpl = std::move(object);
+	}
+
+	// Bitmap Data Factory
+	{
+		auto object = std::make_unique<CPP_SDL_BitmapDataFactory>(renderer.get());
+		setBitmapDataFactory(std::move(object));
 	}
 	
-	CPP_Engine::gameLoop();
+	// Input
+	{
+		auto object = std::make_unique<CPP_SDL_InputImpl>();
+		object->registerOnQuit([this]()
+		{
+			end();
+		});
+		setInput(std::move(object));
+	}
 }

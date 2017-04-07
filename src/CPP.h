@@ -25,6 +25,8 @@ class CPP_Engine;
 class CPP_World;
 class CPP_BitmapDataIF;
 
+enum class CPP_Key;
+
 class CPP
 {
 	friend CPP_Engine;
@@ -190,6 +192,10 @@ public:
 	std::unique_ptr<CPP_BitmapDataIF> getBitmapData(const std::string& filename) const;
 	std::unique_ptr<CPP_BitmapDataIF> getBitmapData(int width, int height, bool transparent=true, unsigned int fillColor=0xFFFFFFFFu) const;
 	
+	bool check(CPP_Key key) const;
+	bool pressed(CPP_Key key) const;
+	bool released(CPP_Key key) const;
+	
 	// TODO: timeFlag()
 	static std::chrono::steady_clock::time_point getTimer();
 	
@@ -207,8 +213,9 @@ public:
 	std::chrono::steady_clock::time_point getUpdateTime();
 	
 private:
+	// TODO: Make these objects that have impl pointers set via functions.
 	std::unique_ptr<CPP_BitmapDataFactoryIF> bitmapDataFactory;
-	std::unique_ptr<CPP_Input> input;
+	CPP_Input input;
 	
 	std::shared_ptr<CPP_World> world;
 	std::shared_ptr<CPP_World> gotoWorld;

@@ -592,6 +592,21 @@ std::unique_ptr<CPP_BitmapDataIF> CPP::getBitmapData(const int width, const int 
 	return bitmapDataFactory ? bitmapDataFactory->getBitmapData(width, height, transparent, fillColor) : nullptr;
 }
 
+bool CPP::check(const CPP_Key key) const
+{
+	return input.check(key);
+}
+
+bool CPP::pressed(const CPP_Key key) const
+{
+	return input.pressed(key);
+}
+
+bool CPP::released(const CPP_Key key) const
+{
+	return input.released(key);
+}
+
 std::chrono::steady_clock::time_point CPP::getTimer()
 {
 	return std::chrono::steady_clock::now();

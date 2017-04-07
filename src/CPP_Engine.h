@@ -10,7 +10,7 @@
 #define CPP_Engine_h
 
 #include "CPP.h"
-#include "CPP_RendererIF.h"
+#include "CPP_RendererImplIF.h"
 
 #include <chrono>
 #include <memory>
@@ -18,7 +18,7 @@
 #include <string>
 
 class CPP_BitmapDataFactoryIF;
-class CPP_Input;
+class CPP_InputImplIF;
 
 class CPP_Engine
 {
@@ -38,6 +38,7 @@ public:
 	
 	void end();
 	
+	// TODO: Determine what should actually be virtual/public.
 	virtual void init();
 	
 	virtual void gameLoop();
@@ -55,11 +56,15 @@ public:
 	//virtual void
 
 protected:
+	// TODO: These functions should be set in the constructor.
+	//       Any additional use of them should be set up in
+	//       init(). For example renderer should set the render
+	//       function in init().
 	void setBitmapDataFactory(std::unique_ptr<CPP_BitmapDataFactoryIF> bitmapDataFactory);
-	void setInput(std::unique_ptr<CPP_Input> input);
+	void setInput(std::unique_ptr<CPP_InputImplIF> input);
 	
 	CPP cpp;
-	std::unique_ptr<CPP_RendererIF> renderer;
+	std::unique_ptr<CPP_RendererImplIF> rendererImpl;
 	
 private:
 	void framerateIndependentGameLoop();

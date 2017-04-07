@@ -101,6 +101,8 @@ void CPP_Engine::init()
 
 void CPP_Engine::gameLoop()
 {
+	cpp.input.processInput();
+	
 	if (cpp.isFixed())
 	{
 		fixedFramerateGameLoop();
@@ -145,10 +147,7 @@ void CPP_Engine::framerateIndependentGameLoop()
 	}
 	
 	// Update input.
-	if (cpp.input)
-	{
-		cpp.input->update();
-	}
+	cpp.input.update();
 	
 	// Update timer.
 	const auto time2 = CPP::getTimer();
@@ -158,7 +157,10 @@ void CPP_Engine::framerateIndependentGameLoop()
 	// Render loop.
 	if (!paused)
 	{
-		render();
+		if (rendererImpl)
+		{
+			rendererImpl->render();
+		}
 	}
 	
 	// Update timer.
@@ -214,10 +216,7 @@ void CPP_Engine::fixedFramerateGameLoop()
 		}
 		
 		// Update input.
-		if (cpp.input)
-		{
-			cpp.input->update();
-		}
+		cpp.input.update();
 		
 		// Update timer.
 		const auto time3 = CPP::getTimer();
@@ -230,7 +229,10 @@ void CPP_Engine::fixedFramerateGameLoop()
 	// Render loop.
 	if (!paused)
 	{
-		render();
+		if (rendererImpl)
+		{
+			rendererImpl->render();
+		}
 	}
 	
 	// Update timer.
@@ -269,38 +271,32 @@ void CPP_Engine::update()
 
 void CPP_Engine::render()
 {
-	if (renderer)
+	// Timing stuff.
+	if (frameLast == std::chrono::steady_clock::time_point{})
 	{
-		renderer->render([this]()
-		{
-			// Timing stuff.
-			if (frameLast == std::chrono::steady_clock::time_point{})
-			{
-				frameLast = CPP::getTimer();
-			}
-			
-			// Render loop.
-			if (cpp.world->isVisible())
-			{
-				cpp.world->render();
-			}
-			
-			// More timing stuff.
-			const auto t = CPP::getTimer();
-			frameList.emplace(t - frameLast);
-			frameListSum += frameList.back();
-			
-			if (frameList.size() > 120u)
-			{
-				frameListSum -= frameList.front();
-				frameList.pop();
-			}
-			
-			cpp.frameTime = frameListSum / frameList.size();
-			cpp.frameRate = 1.0 / std::chrono::duration<double>{cpp.frameTime}.count();
-			frameLast = t;
-		});
+		frameLast = CPP::getTimer();
 	}
+	
+	// Render loop.
+	if (cpp.world->isVisible())
+	{
+		cpp.world->render();
+	}
+	
+	// More timing stuff.
+	const auto t = CPP::getTimer();
+	frameList.emplace(t - frameLast);
+	frameListSum += frameList.back();
+	
+	if (frameList.size() > 120u)
+	{
+		frameListSum -= frameList.front();
+		frameList.pop();
+	}
+	
+	cpp.frameTime = frameListSum / frameList.size();
+	cpp.frameRate = 1.0 / std::chrono::duration<double>{cpp.frameTime}.count();
+	frameLast = t;
 }
 
 void CPP_Engine::focusGained()
@@ -316,9 +312,9 @@ void CPP_Engine::setBitmapDataFactory(std::unique_ptr<CPP_BitmapDataFactoryIF> b
 	cpp.bitmapDataFactory = std::move(bitmapDataFactory);
 }
 
-void CPP_Engine::setInput(std::unique_ptr<CPP_Input> input)
+void CPP_Engine::setInput(std::unique_ptr<CPP_InputImplIF> input)
 {
-	cpp.input = std::move(input);
+	cpp.input.setImpl(std::move(input));
 }
 
 void CPP_Engine::checkWorld()
