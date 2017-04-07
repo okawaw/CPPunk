@@ -21,6 +21,72 @@ CPP_Key translateKey(const SDL_Keycode key)
 	
 	switch (key)
 	{
+		case SDLK_LEFT:
+		{
+			ret = CPP_Key::LEFT;
+			break;
+		}
+		case SDLK_UP:
+		{
+			ret = CPP_Key::UP;
+			break;
+		}
+		case SDLK_RIGHT:
+		{
+			ret = CPP_Key::RIGHT;
+			break;
+		}
+		case SDLK_DOWN:
+		{
+			ret = CPP_Key::DOWN;
+			break;
+		}
+		
+		// TODO: SDLK_RETURN2?
+		case SDLK_RETURN:
+		{
+			ret = CPP_Key::ENTER;
+			break;
+		}
+		
+		// TODO: SDLK_AC_HOME?
+		case SDLK_HOME:
+		{
+			ret = CPP_Key::HOME;
+			break;
+		}
+		case SDLK_INSERT:
+		{
+			ret = CPP_Key::INSERT;
+			break;
+		}
+		// TODO: SDLK_KP_TAB?
+		case SDLK_TAB:
+		{
+			ret = CPP_Key::TAB;
+			break;
+		}
+		case SDLK_PAGEUP:
+		{
+			ret = CPP_Key::PAGE_UP;
+			break;
+		}
+		case SDLK_PAGEDOWN:
+		{
+			ret = CPP_Key::PAGE_DOWN;
+			break;
+		}
+		case SDLK_LEFTBRACKET:
+		{
+			ret = CPP_Key::LEFT_SQUARE_BRACKET;
+			break;
+		}
+		case SDLK_RIGHTBRACKET:
+		{
+			ret = CPP_Key::RIGHT_SQUARE_BRACKET;
+			break;
+		}
+		
 		case SDLK_0:
 		{
 			ret = CPP_Key::DIGIT_0;
@@ -99,6 +165,106 @@ CPP_Key translateKey(const SDL_Keycode key)
 		case SDLK_f:
 		{
 			ret = CPP_Key::F;
+			break;
+		}
+		case SDLK_g:
+		{
+			ret = CPP_Key::G;
+			break;
+		}
+		case SDLK_h:
+		{
+			ret = CPP_Key::H;
+			break;
+		}
+		case SDLK_i:
+		{
+			ret = CPP_Key::I;
+			break;
+		}
+		case SDLK_j:
+		{
+			ret = CPP_Key::J;
+			break;
+		}
+		case SDLK_k:
+		{
+			ret = CPP_Key::K;
+			break;
+		}
+		case SDLK_l:
+		{
+			ret = CPP_Key::L;
+			break;
+		}
+		case SDLK_m:
+		{
+			ret = CPP_Key::M;
+			break;
+		}
+		case SDLK_n:
+		{
+			ret = CPP_Key::N;
+			break;
+		}
+		case SDLK_o:
+		{
+			ret = CPP_Key::O;
+			break;
+		}
+		case SDLK_p:
+		{
+			ret = CPP_Key::P;
+			break;
+		}
+		case SDLK_q:
+		{
+			ret = CPP_Key::Q;
+			break;
+		}
+		case SDLK_r:
+		{
+			ret = CPP_Key::R;
+			break;
+		}
+		case SDLK_s:
+		{
+			ret = CPP_Key::S;
+			break;
+		}
+		case SDLK_t:
+		{
+			ret = CPP_Key::T;
+			break;
+		}
+		case SDLK_u:
+		{
+			ret = CPP_Key::U;
+			break;
+		}
+		case SDLK_v:
+		{
+			ret = CPP_Key::V;
+			break;
+		}
+		case SDLK_w:
+		{
+			ret = CPP_Key::W;
+			break;
+		}
+		case SDLK_x:
+		{
+			ret = CPP_Key::X;
+			break;
+		}
+		case SDLK_y:
+		{
+			ret = CPP_Key::Y;
+			break;
+		}
+		case SDLK_z:
+		{
+			ret = CPP_Key::Z;
 			break;
 		}
 		default:
