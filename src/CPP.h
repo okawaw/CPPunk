@@ -13,10 +13,12 @@
 #include "CPP_Input.h"
 #include "CPP_Point.h"
 #include "CPP_Rectangle.h"
+#include "CPP_SoundManager.h"
 
 #include <chrono>
 #include <cmath>
 #include <memory>
+#include <experimental/optional>
 #include <random>
 #include <string>
 #include <vector>
@@ -24,12 +26,15 @@
 class CPP_Engine;
 class CPP_World;
 class CPP_BitmapDataIF;
+class CPP_Sfx;
 
 enum class CPP_Key;
+enum class CPP_SfxType;
 
 class CPP
 {
 	friend CPP_Engine;
+	friend CPP_Sfx; // TODO: Remove this when soundManager is a reference, since the CPP_Sfx can call the public reference.
 	
 	// TODO: Reorganize this.
 private:
@@ -196,6 +201,15 @@ public:
 	bool pressed(CPP_Key key) const;
 	bool released(CPP_Key key) const;
 	
+	// TODO: Remove these when soundManager is a reference.
+	double getPan(const std::experimental::optional<CPP_SfxType>& type) const;
+	double getVolume(const std::experimental::optional<CPP_SfxType>& type) const;
+	void setPan(const std::experimental::optional<CPP_SfxType>& type, double pan);
+	void setVolume(const std::experimental::optional<CPP_SfxType>& type, double volume);
+	void resetPan(const std::experimental::optional<CPP_SfxType>& type);
+	void resetVolume(const std::experimental::optional<CPP_SfxType>& type);
+	
+	
 	// TODO: timeFlag()
 	static std::chrono::steady_clock::time_point getTimer();
 	
@@ -216,6 +230,7 @@ private:
 	// TODO: Make these objects that have impl pointers set via functions.
 	std::unique_ptr<CPP_BitmapDataFactoryIF> bitmapDataFactory;
 	CPP_Input input;
+	CPP_SoundManager soundManager;
 	
 	std::shared_ptr<CPP_World> world;
 	std::shared_ptr<CPP_World> gotoWorld;

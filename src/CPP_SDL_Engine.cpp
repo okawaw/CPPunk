@@ -11,12 +11,14 @@
 #include "CPP_SDL_BitmapDataFactory.h"
 #include "CPP_SDL_InputImpl.h"
 #include "CPP_SDL_RendererImpl.h"
+#include "CPP_SDL_SoundManagerImpl.h"
 
 #include <utility>
 
 // TODO: Fix includes.
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include <SDL2_mixer/SDL_mixer.h>
 
 CPP_SDL_Engine::CPP_SDL_Engine(std::string title, const unsigned int width, const unsigned int height, const double frameRate, bool fixed) :
   CPP_Engine{std::move(title), width, height, frameRate, fixed}
@@ -31,6 +33,7 @@ void CPP_SDL_Engine::init()
 	
 	SDL_Init(SDL_INIT_EVERYTHING);
 	IMG_Init(IMG_INIT_PNG);
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 	window.reset(SDL_CreateWindow(cpp.getTitle().c_str(), 0, 0, static_cast<int>(cpp.getWidth()), static_cast<int>(cpp.getHeight()), SDL_WINDOW_SHOWN));
 	renderer.reset(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 	
@@ -57,5 +60,11 @@ void CPP_SDL_Engine::init()
 			end();
 		});
 		setInput(std::move(object));
+	}
+	
+	// Sound
+	{
+		auto object = std::make_unique<CPP_SDL_SoundManagerImpl>();
+		setSoundManager(std::move(object));
 	}
 }

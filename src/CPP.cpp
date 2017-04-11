@@ -607,6 +607,36 @@ bool CPP::released(const CPP_Key key) const
 	return input.released(key);
 }
 
+double CPP::getPan(const std::experimental::optional<CPP_SfxType>& type) const
+{
+	return soundManager.getPan(type);
+}
+
+double CPP::getVolume(const std::experimental::optional<CPP_SfxType>& type) const
+{
+	return soundManager.getVolume(type);
+}
+
+void CPP::setPan(const std::experimental::optional<CPP_SfxType>& type, const double pan)
+{
+	soundManager.setPan(type, pan);
+}
+
+void CPP::setVolume(const std::experimental::optional<CPP_SfxType>& type, const double volume)
+{
+	soundManager.setVolume(type, volume);
+}
+
+void CPP::resetPan(const std::experimental::optional<CPP_SfxType>& type)
+{
+	soundManager.resetPan(type);
+}
+
+void CPP::resetVolume(const std::experimental::optional<CPP_SfxType>& type)
+{
+	soundManager.resetVolume(type);
+}
+
 std::chrono::steady_clock::time_point CPP::getTimer()
 {
 	return std::chrono::steady_clock::now();

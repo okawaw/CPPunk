@@ -20,7 +20,7 @@ enum class CPP_Key;
 
 class CPP_Input
 {
-	friend CPP_Engine;
+	friend CPP_Engine; // TODO: Why is this a friend?
 public:
 	CPP_Input() = default;
 	~CPP_Input() = default;

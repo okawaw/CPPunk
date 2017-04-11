@@ -19,6 +19,7 @@
 
 class CPP_BitmapDataFactoryIF;
 class CPP_InputImplIF;
+class CPP_SoundManagerImplIF;
 
 class CPP_Engine
 {
@@ -62,6 +63,7 @@ protected:
 	//       function in init().
 	void setBitmapDataFactory(std::unique_ptr<CPP_BitmapDataFactoryIF> bitmapDataFactory);
 	void setInput(std::unique_ptr<CPP_InputImplIF> input);
+	void setSoundManager(std::unique_ptr<CPP_SoundManagerImplIF> soundManager);
 	
 	CPP cpp;
 	std::unique_ptr<CPP_RendererImplIF> rendererImpl;

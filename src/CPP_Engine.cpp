@@ -102,6 +102,7 @@ void CPP_Engine::init()
 void CPP_Engine::gameLoop()
 {
 	cpp.input.processInput();
+	cpp.soundManager.processSound();
 	
 	if (cpp.isFixed())
 	{
@@ -315,6 +316,11 @@ void CPP_Engine::setBitmapDataFactory(std::unique_ptr<CPP_BitmapDataFactoryIF> b
 void CPP_Engine::setInput(std::unique_ptr<CPP_InputImplIF> input)
 {
 	cpp.input.setImpl(std::move(input));
+}
+
+void CPP_Engine::setSoundManager(std::unique_ptr<CPP_SoundManagerImplIF> soundManager)
+{
+	cpp.soundManager.setImpl(std::move(soundManager));
 }
 
 void CPP_Engine::checkWorld()

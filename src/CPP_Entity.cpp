@@ -18,7 +18,7 @@
 #include <utility>
 
 CPP_Entity::CPP_Entity(const CPP& _cpp, const double _x, const double _y, std::shared_ptr<CPP_Graphic> _graphic, std::shared_ptr<CPP_Mask> _mask) :
-  cpp(_cpp)
+  cpp{_cpp}
 , visible{true}
 , collidable{true}
 , x{_x}
