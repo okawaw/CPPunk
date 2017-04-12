@@ -19,12 +19,12 @@ CPP_SDL_SoundChannel::CPP_SDL_SoundChannel(const int channel) :
 
 void CPP_SDL_SoundChannel::registerOnComplete(std::function<void()> onCompleteFunction) const
 {
-	CPP_SDL_SoundManagerImpl::registerOnComplete(channel, std::move(onCompleteFunction));
+	CPP_SDL_SoundManagerImpl::registerOnCompleteSound(channel, std::move(onCompleteFunction));
 }
 
 void CPP_SDL_SoundChannel::unregisterOnComplete() const
 {
-	CPP_SDL_SoundManagerImpl::unregisterOnComplete(channel);
+	CPP_SDL_SoundManagerImpl::unregisterOnCompleteSound(channel);
 }
 
 std::experimental::optional<double> CPP_SDL_SoundChannel::getPosition() const
@@ -44,7 +44,7 @@ bool CPP_SDL_SoundChannel::stop() const
 void CPP_SDL_SoundChannel::setVolume(const double value) const
 {
 	// TODO: Call a function to CPP_SDL_SoundManagerImpl to do this.
-	Mix_Volume(channel, static_cast<int>(MIX_MAX_VOLUME * value));
+	Mix_Volume(channel, static_cast<int>(static_cast<double>(MIX_MAX_VOLUME) * value));
 }
 
 void CPP_SDL_SoundChannel::setPan(const double value) const

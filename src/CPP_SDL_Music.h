@@ -21,8 +21,14 @@ class CPP_SDL_Music : public CPP_SoundIF
 public:
 	CPP_SDL_Music(const std::string& filename);
 	virtual ~CPP_SDL_Music() = default;
+	CPP_SDL_Music(const CPP_SDL_Music&) = default;
+	CPP_SDL_Music(CPP_SDL_Music&&) = default;
+	CPP_SDL_Music& operator=(const CPP_SDL_Music&) = default;
+	CPP_SDL_Music& operator=(CPP_SDL_Music&&) = default;
 	
 	virtual std::unique_ptr<CPP_SoundChannelIF> play(double startTime=0.0, double pan=0.0, double volume=1.0) const override;
+	
+	virtual std::experimental::optional<double> getLength() const override;
 	
 private:
 	std::unique_ptr<_Mix_Music, void(*)(_Mix_Music*)> music;

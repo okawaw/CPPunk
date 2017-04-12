@@ -31,10 +31,15 @@ namespace
 {
 	struct StaticData
 	{
-		std::mutex lock;
-		std::unordered_map<int, std::queue<std::function<void()> > > onCompleteFunctionMap;
-		std::vector<int> completedChannelsToQueue;
-		std::vector<int> completedChannelsToExecute;
+		std::mutex lockSound;
+		std::unordered_map<int, std::queue<std::function<void()> > > onCompleteFunctionMapSound;
+		std::vector<int> completedSoundChannelsToQueue;
+		std::vector<int> completedSoundChannelsToExecute;
+		
+		std::mutex lockMusic;
+		std::queue<std::function<void()> > onCompleteFunctionQueueMusic;
+		unsigned int numberOfMusicCompletesToQueue;
+		unsigned int numberOfMusicCompletesToExecute;
 	};
 
 	std::unique_ptr<StaticData> staticData;
@@ -48,9 +53,16 @@ CPP_SDL_SoundManagerImpl::CPP_SDL_SoundManagerImpl()
 		
 		Mix_ChannelFinished([](const int channel)
 		{
-			std::lock_guard<std::mutex> l(staticData->lock);
+			std::lock_guard<std::mutex> lockGuard{staticData->lockSound};
 			
-			staticData->completedChannelsToQueue.emplace_back(channel);
+			staticData->completedSoundChannelsToQueue.emplace_back(channel);
+		});
+		
+		Mix_HookMusicFinished([]()
+		{
+			std::lock_guard<std::mutex> lockGuard{staticData->lockMusic};
+			
+			++staticData->numberOfMusicCompletesToQueue;
 		});
 	}
 }
@@ -58,65 +70,118 @@ CPP_SDL_SoundManagerImpl::CPP_SDL_SoundManagerImpl()
 void CPP_SDL_SoundManagerImpl::processSound() const
 {
 	{
-		std::lock_guard<std::mutex> l(staticData->lock);
+		std::lock_guard<std::mutex> lockGuard{staticData->lockSound};
 		
-		staticData->completedChannelsToQueue.swap(staticData->completedChannelsToExecute);
+		staticData->completedSoundChannelsToQueue.swap(staticData->completedSoundChannelsToExecute);
 	}
 	
-	for (const auto& completedChannel : staticData->completedChannelsToExecute)
 	{
-		const auto onCompleteFunctionMapIterator = staticData->onCompleteFunctionMap.find(completedChannel);
+		std::lock_guard<std::mutex> lockGuard{staticData->lockMusic};
 		
-		if (onCompleteFunctionMapIterator != staticData->onCompleteFunctionMap.end() && !onCompleteFunctionMapIterator->second.empty())
+		staticData->numberOfMusicCompletesToExecute = staticData->numberOfMusicCompletesToQueue;
+		staticData->numberOfMusicCompletesToQueue = 0u;
+	}
+	
+	for (const auto& completedSoundChannel : staticData->completedSoundChannelsToExecute)
+	{
+		const auto onCompleteFunctionMapSoundIterator = staticData->onCompleteFunctionMapSound.find(completedSoundChannel);
+		
+		if (onCompleteFunctionMapSoundIterator != staticData->onCompleteFunctionMapSound.end())
 		{
-			auto& onCompleteFunctionMapQueue = onCompleteFunctionMapIterator->second;
+			auto& onCompleteFunctionMapSoundQueue = onCompleteFunctionMapSoundIterator->second;
 
-			if (!onCompleteFunctionMapQueue.empty())
+			if (!onCompleteFunctionMapSoundQueue.empty())
 			{
-				const auto& onCompleteFunctionToExecute = onCompleteFunctionMapQueue.front();
+				const auto& onCompleteFunctionToExecute = onCompleteFunctionMapSoundQueue.front();
 				
 				if (onCompleteFunctionToExecute)
 				{
 					onCompleteFunctionToExecute();
 				}
 				
-				onCompleteFunctionMapQueue.pop();
+				onCompleteFunctionMapSoundQueue.pop();
 				
-				if (onCompleteFunctionMapQueue.empty())
+				if (onCompleteFunctionMapSoundQueue.empty())
 				{
-					staticData->onCompleteFunctionMap.erase(onCompleteFunctionMapIterator);
+					staticData->onCompleteFunctionMapSound.erase(onCompleteFunctionMapSoundIterator);
 				}
 			}
+			else
+			{
+				std::cerr << "Channel " << completedSoundChannel << " completed but had no corresponding onComplete to execute." << std::endl;
+			}
 		}
-		else // TODO: Remove this.
+		else
 		{
-			std::cerr << "Channel " << completedChannel << " completed but had no corresponding onComplete to execute." << std::endl;
+			std::cerr << "Channel " << completedSoundChannel << " completed but had no corresponding onComplete to execute." << std::endl;
 		}
 	}
 	
-	staticData->completedChannelsToExecute.clear();
-}
-
-void CPP_SDL_SoundManagerImpl::registerOnComplete(const int channel, std::function<void()> onCompleteFunction)
-{
-	staticData->onCompleteFunctionMap[channel].emplace(std::move(onCompleteFunction));
-}
-
-void CPP_SDL_SoundManagerImpl::unregisterOnComplete(const int channel)
-{
-	const auto onCompleteFunctionMapIterator = staticData->onCompleteFunctionMap.find(channel);
+	staticData->completedSoundChannelsToExecute.clear();
 	
-	if (onCompleteFunctionMapIterator != staticData->onCompleteFunctionMap.end())
+	while (staticData->numberOfMusicCompletesToExecute)
 	{
-		auto& onCompleteFunctionMapQueue = onCompleteFunctionMapIterator->second;
-		
-		if (!onCompleteFunctionMapQueue.empty())
+		if (!staticData->onCompleteFunctionQueueMusic.empty())
 		{
-			onCompleteFunctionMapQueue.back() = nullptr;
+			const auto& onCompleteFunctionToExecute = staticData->onCompleteFunctionQueueMusic.front();
+			
+			if (onCompleteFunctionToExecute)
+			{
+				onCompleteFunctionToExecute();
+			}
+			
+			staticData->onCompleteFunctionQueueMusic.pop();
+		}
+		else
+		{
+			std::cerr << "Music completed but had no corresponding onComplete to execute." << std::endl;
+		}
+		
+		--staticData->numberOfMusicCompletesToExecute;
+	}
+}
+
+void CPP_SDL_SoundManagerImpl::registerOnCompleteSound(const int channel, std::function<void()> onCompleteFunction)
+{
+	staticData->onCompleteFunctionMapSound[channel].emplace(std::move(onCompleteFunction));
+}
+
+void CPP_SDL_SoundManagerImpl::unregisterOnCompleteSound(const int channel)
+{
+	const auto onCompleteFunctionMapSoundIterator = staticData->onCompleteFunctionMapSound.find(channel);
+	
+	if (onCompleteFunctionMapSoundIterator != staticData->onCompleteFunctionMapSound.end())
+	{
+		auto& onCompleteFunctionMapSoundQueue = onCompleteFunctionMapSoundIterator->second;
+		
+		if (!onCompleteFunctionMapSoundQueue.empty() && onCompleteFunctionMapSoundQueue.back())
+		{
+			onCompleteFunctionMapSoundQueue.back() = nullptr;
+		}
+		else
+		{
+			std::cerr << "Channel " << channel << " was unregistered but had no corresponding onComplete to clear." << std::endl;
 		}
 	}
-	else // TODO: Remove this.
+	else
 	{
 		std::cerr << "Channel " << channel << " was unregistered but had no corresponding onComplete to clear." << std::endl;
+	}
+}
+
+void CPP_SDL_SoundManagerImpl::registerOnCompleteMusic(std::function<void()> onCompleteFunction)
+{
+	staticData->onCompleteFunctionQueueMusic.emplace(std::move(onCompleteFunction));
+}
+
+void CPP_SDL_SoundManagerImpl::unregisterOnCompleteMusic()
+{
+	if (!staticData->onCompleteFunctionQueueMusic.empty() && staticData->onCompleteFunctionQueueMusic.back())
+	{
+		staticData->onCompleteFunctionQueueMusic.back() = nullptr;
+	}
+	else
+	{
+		std::cerr << "Music was unregistered but had no corresponding onComplete to clear." << std::endl;
 	}
 }

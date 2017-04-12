@@ -14,9 +14,11 @@
 #include <functional>
 
 class CPP_SDL_SoundChannel;
+class CPP_SDL_MusicChannel;
 
 class CPP_SDL_SoundManagerImpl : public CPP_SoundManagerImplIF
 {
+	friend CPP_SDL_MusicChannel;
 	friend CPP_SDL_SoundChannel;
 public:
 	CPP_SDL_SoundManagerImpl();
@@ -28,10 +30,12 @@ public:
 	
 	virtual void processSound() const override;
 	
-private:	
-	static void registerOnComplete(int channel, std::function<void()> onCompleteFunction);
-	static void unregisterOnComplete(int channel);
+private:
+	static void registerOnCompleteSound(int channel, std::function<void()> onCompleteFunction);
+	static void unregisterOnCompleteSound(int channel);
 	
+	static void registerOnCompleteMusic(std::function<void()> onCompleteFunction);
+	static void unregisterOnCompleteMusic();
 };
 
 #endif /* CPP_SDL_SoundManagerImpl_h */

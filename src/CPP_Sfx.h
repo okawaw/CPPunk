@@ -68,7 +68,7 @@ private:
 	double pan;
 	double filteredVol;
 	double filteredPan;
-	std::unique_ptr<CPP_SoundIF> sound;
+	std::unique_ptr<CPP_SoundIF> sound; // TODO: Make this a shared_ptr.
 	std::unique_ptr<CPP_SoundChannelIF> channel;
 	double position;
 	bool looping;

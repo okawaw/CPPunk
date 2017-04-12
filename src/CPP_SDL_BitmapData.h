@@ -41,7 +41,7 @@ public:
 	virtual void unlock() override;
 	
 private:
-	SDL_Renderer* renderer;
+	SDL_Renderer* renderer; // TODO: Make this const.
 	bool transparent;
 	
 	// TODO: Should include? Or is forward declaration enough?

@@ -30,12 +30,12 @@ std::unique_ptr<CPP_SoundChannelIF> CPP_SDL_Sound::play(const double startTime, 
 		return nullptr;
 	}
 	
-	Mix_Volume(channel, static_cast<int>(MIX_MAX_VOLUME * volume));
+	Mix_Volume(channel, static_cast<int>(static_cast<double>(MIX_MAX_VOLUME) * volume));
 	const auto left = static_cast<int>(127.0 * (1.0 - pan));
 	Mix_SetPanning(channel, left, 254 - left);
 	
 	// TODO: Remove this.
-	std::cout << "playing on channel: " << channel << std::endl;
+	std::cout << "Sound playing on channel: " << channel << std::endl;
 	return std::make_unique<CPP_SDL_SoundChannel>(channel);
 }
 
