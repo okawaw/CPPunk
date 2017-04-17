@@ -30,7 +30,7 @@ class CPP_Entity : public CPP_Tweener
 {
 	friend CPP_World;
 public:
-	CPP_Entity(const CPP& cpp, double x=0.0, double y=0.0, std::shared_ptr<CPP_Graphic> graphic=nullptr, std::shared_ptr<CPP_Mask> mask=nullptr);
+	CPP_Entity(CPP& cpp, double x=0.0, double y=0.0, std::shared_ptr<CPP_Graphic> graphic=nullptr, std::shared_ptr<CPP_Mask> mask=nullptr);
 	virtual ~CPP_Entity() = default;
 	// TODO: Other constructors.
 	
@@ -154,7 +154,7 @@ public:
 	bool isOnCamera() const;
 	
 private:
-	const CPP& cpp;
+	CPP& cpp;
 	bool visible;
 	bool collidable;
 	double x;

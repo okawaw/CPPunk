@@ -33,7 +33,7 @@ CPP_World::CPP_WorldEntityCache::CPP_WorldEntityCache(std::shared_ptr<CPP_Entity
 {
 }
 
-CPP_World::CPP_World(const CPP& _cpp) :
+CPP_World::CPP_World(CPP& _cpp) :
   cpp{_cpp}
 , visible{true}
 {

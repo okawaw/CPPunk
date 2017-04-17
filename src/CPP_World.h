@@ -34,7 +34,7 @@ class CPP_World : public CPP_Tweener, public std::enable_shared_from_this<CPP_Wo
 {
 	friend CPP_Entity;
 public:
-	CPP_World(const CPP& cpp);
+	CPP_World(CPP& cpp);
 	virtual ~CPP_World() = default;
 	// TODO: Other constructors.
 	
@@ -206,7 +206,7 @@ public:
 	// Adds Entity to the render list.
 	
 protected:
-	const CPP& cpp;
+	CPP& cpp;
 	
 private:
 	//void addUpdate(std::shared_ptr<CPP_Entity> e);
