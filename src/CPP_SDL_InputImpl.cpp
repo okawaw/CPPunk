@@ -478,7 +478,6 @@ CPP_Key translateKey(const SDL_Keycode key)
 		
 		default:
 		{
-			std::cout << "Key is unsupported." << std::endl;
 			ret = CPP_Key::ANY;
 			break;
 		}
