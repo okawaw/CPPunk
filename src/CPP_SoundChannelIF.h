@@ -27,7 +27,7 @@ public:
 	
 	virtual std::experimental::optional<double> getPosition() const = 0;
 	
-	virtual bool stop() const = 0;
+	virtual void stop() const = 0;
 	
 	virtual void setVolume(double value) const = 0;
 	

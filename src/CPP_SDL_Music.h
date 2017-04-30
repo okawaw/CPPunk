@@ -11,10 +11,9 @@
 
 #include "CPP_SoundIF.h"
 
-#include <memory>
 #include <string>
 
-struct _Mix_Music;
+class _Mix_Music;
 
 class CPP_SDL_Music : public CPP_SoundIF
 {

@@ -32,8 +32,14 @@ void CPP_SDL_Engine::init()
 	CPP_Engine::init();
 	
 	SDL_Init(SDL_INIT_EVERYTHING);
-	IMG_Init(IMG_INIT_PNG);
+	
+	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
+	
+	// TODO: Make these options configurable.
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+	Mix_Init(MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MODPLUG | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_FLUIDSYNTH);
+	const auto channels = static_cast<unsigned int>(Mix_AllocateChannels(MIX_CHANNELS));
+	
 	window.reset(SDL_CreateWindow(cpp.getTitle().c_str(), 0, 0, static_cast<int>(cpp.getWidth()), static_cast<int>(cpp.getHeight()), SDL_WINDOW_SHOWN));
 	renderer.reset(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 	
@@ -64,7 +70,7 @@ void CPP_SDL_Engine::init()
 	
 	// Sound
 	{
-		auto object = std::make_unique<CPP_SDL_SoundManagerImpl>();
+		auto object = std::make_unique<CPP_SDL_SoundManagerImpl>(channels);
 		setSoundManager(std::move(object));
 	}
 }

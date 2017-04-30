@@ -8,61 +8,122 @@
 
 #include "CPP_SDL_SoundManagerImpl.h"
 
+#include "CPP_SDL_MusicChannel.h"
+#include "CPP_SDL_SoundChannel.h"
+
 #include <iostream>
-#include <memory>
 #include <mutex>
+#include <experimental/optional>
+#include <stack>
 #include <unordered_map>
-#include <vector>
-#include <queue>
+#include <unordered_set>
 #include <utility>
 
 #include <SDL2_mixer/SDL_mixer.h>
-
-
-// TODO: Sunday:
-//       Make queuing happen as integer values--basically, which channels completed.
-//       Registering no longer needs a lock since accessing the callbacks will always happen on the main thread.
-//       I need to figure out how to differentiate different instances of the same channel ID.
-//       The problem is we don't know the channel ID until we start playing.
-//
-// Give each SDL sound an ID so we know each one even if they are different sounds on the same channel.
 
 namespace
 {
 	struct StaticData
 	{
-		std::mutex lockSound;
-		std::unordered_map<int, std::queue<std::function<void()> > > onCompleteFunctionMapSound;
-		std::vector<int> completedSoundChannelsToQueue;
-		std::vector<int> completedSoundChannelsToExecute;
+		StaticData(const unsigned int channels) :
+		  channels{channels}
+		, nextSoundID{0u}
+		, nextMusicID{0u}
+		{
+			for (auto i = 0u; i < channels; ++i)
+			{
+				availableChannels.push(static_cast<int>(i));
+			}
+		}
 		
-		std::mutex lockMusic;
-		std::queue<std::function<void()> > onCompleteFunctionQueueMusic;
-		unsigned int numberOfMusicCompletesToQueue;
-		unsigned int numberOfMusicCompletesToExecute;
+		// Sound data.
+		const unsigned int channels;
+		std::stack<int> availableChannels;
+		std::unordered_map<int, unsigned int> channelLookup;
+		
+		std::mutex soundMutex;
+		
+		unsigned int nextSoundID;
+		std::unordered_set<unsigned int> soundsPlaying;
+		
+		std::unordered_map<unsigned int, std::function<void()> > onCompleteSoundFunctions;
+		std::unordered_set<unsigned int> completedSoundsToQueue;
+		std::unordered_set<unsigned int> completedSoundsToExecute;
+		
+		// Music data.
+		std::mutex musicMutex;
+		
+		unsigned int nextMusicID;
+		std::experimental::optional<unsigned int> musicPlaying;
+		
+		std::unordered_map<unsigned int, std::function<void()> > onCompleteMusicFunctions;
+		std::unordered_set<unsigned int> completedMusicToQueue;
+		std::unordered_set<unsigned int> completedMusicToExecute;
 	};
 
 	std::unique_ptr<StaticData> staticData;
+	
+	void setSoundVolume(const int channel, const double value)
+	{
+		Mix_Volume(channel, static_cast<int>(static_cast<double>(MIX_MAX_VOLUME) * value));
+	}
+	
+	void setSoundPan(const int channel, const double value)
+	{
+		const auto left = static_cast<int>(127.0 * (1.0 - value));
+		Mix_SetPanning(channel, left, 254 - left);
+	}
+	
+	void setMusicVolume(const double value)
+	{
+		Mix_VolumeMusic(static_cast<int>((static_cast<double>(MIX_MAX_VOLUME) / 2.0) * value));
+	}
 }
 
-CPP_SDL_SoundManagerImpl::CPP_SDL_SoundManagerImpl()
+CPP_SDL_SoundManagerImpl::CPP_SDL_SoundManagerImpl(const unsigned int channels)
 {
 	if (!staticData)
 	{
-		staticData.reset(new StaticData{});
+		staticData.reset(new StaticData{channels});
 		
 		Mix_ChannelFinished([](const int channel)
 		{
-			std::lock_guard<std::mutex> lockGuard{staticData->lockSound};
+			std::lock_guard<std::mutex> lockGuard{staticData->soundMutex};
 			
-			staticData->completedSoundChannelsToQueue.emplace_back(channel);
+			const auto channelLookupIterator = staticData->channelLookup.find(channel);
+			
+			if (channelLookupIterator != staticData->channelLookup.end())
+			{
+				const auto& soundID = channelLookupIterator->second;
+				
+				staticData->completedSoundsToQueue.emplace(soundID);
+				
+				staticData->soundsPlaying.erase(soundID);
+				
+				staticData->channelLookup.erase(channelLookupIterator);
+			}
+			else
+			{
+				std::cerr << "No sound ID found for completed channel " << channel << "." << std::endl;
+			}
+			
+			staticData->availableChannels.push(channel);
 		});
 		
 		Mix_HookMusicFinished([]()
 		{
-			std::lock_guard<std::mutex> lockGuard{staticData->lockMusic};
+			std::lock_guard<std::mutex> lockGuard{staticData->musicMutex};
 			
-			++staticData->numberOfMusicCompletesToQueue;
+			if (staticData->musicPlaying)
+			{
+				staticData->completedMusicToQueue.emplace(*staticData->musicPlaying);
+				
+				staticData->musicPlaying = std::experimental::nullopt;
+			}
+			else
+			{
+				std::cerr << "No music ID found for completed music." << std::endl;
+			}
 		});
 	}
 }
@@ -70,118 +131,400 @@ CPP_SDL_SoundManagerImpl::CPP_SDL_SoundManagerImpl()
 void CPP_SDL_SoundManagerImpl::processSound() const
 {
 	{
-		std::lock_guard<std::mutex> lockGuard{staticData->lockSound};
+		std::lock_guard<std::mutex> lockGuard{staticData->soundMutex};
 		
-		staticData->completedSoundChannelsToQueue.swap(staticData->completedSoundChannelsToExecute);
+		staticData->completedSoundsToQueue.swap(staticData->completedSoundsToExecute);
 	}
 	
 	{
-		std::lock_guard<std::mutex> lockGuard{staticData->lockMusic};
+		std::lock_guard<std::mutex> lockGuard{staticData->musicMutex};
 		
-		staticData->numberOfMusicCompletesToExecute = staticData->numberOfMusicCompletesToQueue;
-		staticData->numberOfMusicCompletesToQueue = 0u;
+		staticData->completedMusicToQueue.swap(staticData->completedMusicToExecute);
 	}
 	
-	for (const auto& completedSoundChannel : staticData->completedSoundChannelsToExecute)
+	for (const auto& completedSoundID : staticData->completedSoundsToExecute)
 	{
-		const auto onCompleteFunctionMapSoundIterator = staticData->onCompleteFunctionMapSound.find(completedSoundChannel);
+		const auto onCompleteSoundFunctionsIterator = staticData->onCompleteSoundFunctions.find(completedSoundID);
 		
-		if (onCompleteFunctionMapSoundIterator != staticData->onCompleteFunctionMapSound.end())
+		if (onCompleteSoundFunctionsIterator != staticData->onCompleteSoundFunctions.end())
 		{
-			auto& onCompleteFunctionMapSoundQueue = onCompleteFunctionMapSoundIterator->second;
-
-			if (!onCompleteFunctionMapSoundQueue.empty())
-			{
-				const auto& onCompleteFunctionToExecute = onCompleteFunctionMapSoundQueue.front();
-				
-				if (onCompleteFunctionToExecute)
-				{
-					onCompleteFunctionToExecute();
-				}
-				
-				onCompleteFunctionMapSoundQueue.pop();
-				
-				if (onCompleteFunctionMapSoundQueue.empty())
-				{
-					staticData->onCompleteFunctionMapSound.erase(onCompleteFunctionMapSoundIterator);
-				}
-			}
-			else
-			{
-				std::cerr << "Channel " << completedSoundChannel << " completed but had no corresponding onComplete to execute." << std::endl;
-			}
-		}
-		else
-		{
-			std::cerr << "Channel " << completedSoundChannel << " completed but had no corresponding onComplete to execute." << std::endl;
-		}
-	}
-	
-	staticData->completedSoundChannelsToExecute.clear();
-	
-	while (staticData->numberOfMusicCompletesToExecute)
-	{
-		if (!staticData->onCompleteFunctionQueueMusic.empty())
-		{
-			const auto& onCompleteFunctionToExecute = staticData->onCompleteFunctionQueueMusic.front();
+			const auto& onCompleteSoundFunction = onCompleteSoundFunctionsIterator->second;
 			
-			if (onCompleteFunctionToExecute)
+			if (onCompleteSoundFunction)
 			{
-				onCompleteFunctionToExecute();
+				onCompleteSoundFunction();
 			}
 			
-			staticData->onCompleteFunctionQueueMusic.pop();
+			staticData->onCompleteSoundFunctions.erase(onCompleteSoundFunctionsIterator);
 		}
-		else
-		{
-			std::cerr << "Music completed but had no corresponding onComplete to execute." << std::endl;
-		}
-		
-		--staticData->numberOfMusicCompletesToExecute;
 	}
-}
-
-void CPP_SDL_SoundManagerImpl::registerOnCompleteSound(const int channel, std::function<void()> onCompleteFunction)
-{
-	staticData->onCompleteFunctionMapSound[channel].emplace(std::move(onCompleteFunction));
-}
-
-void CPP_SDL_SoundManagerImpl::unregisterOnCompleteSound(const int channel)
-{
-	const auto onCompleteFunctionMapSoundIterator = staticData->onCompleteFunctionMapSound.find(channel);
 	
-	if (onCompleteFunctionMapSoundIterator != staticData->onCompleteFunctionMapSound.end())
+	staticData->completedSoundsToExecute.clear();
+	
+	for (const auto& completedMusicID : staticData->completedMusicToExecute)
 	{
-		auto& onCompleteFunctionMapSoundQueue = onCompleteFunctionMapSoundIterator->second;
+		const auto onCompleteMusicFunctionsIterator = staticData->onCompleteMusicFunctions.find(completedMusicID);
 		
-		if (!onCompleteFunctionMapSoundQueue.empty() && onCompleteFunctionMapSoundQueue.back())
+		if (onCompleteMusicFunctionsIterator != staticData->onCompleteMusicFunctions.end())
 		{
-			onCompleteFunctionMapSoundQueue.back() = nullptr;
+			const auto& onCompleteMusicFunction = onCompleteMusicFunctionsIterator->second;
+			
+			if (onCompleteMusicFunction)
+			{
+				onCompleteMusicFunction();
+			}
+			
+			staticData->onCompleteMusicFunctions.erase(onCompleteMusicFunctionsIterator);
+		}
+	}
+	
+	staticData->completedMusicToExecute.clear();
+}
+
+std::unique_ptr<CPP_SoundChannelIF> CPP_SDL_SoundManagerImpl::playSound(Mix_Chunk& chunk, const double volume, const double pan)
+{	
+	std::experimental::optional<unsigned int> soundID;
+	std::experimental::optional<int> channel;
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->soundMutex};
+		
+		if (!staticData->availableChannels.empty())
+		{
+			for (auto i = 0u; !soundID && i < (staticData->soundsPlaying.size() + staticData->completedSoundsToQueue.size() + staticData->completedSoundsToExecute.size() + 1u); ++i, ++staticData->nextSoundID)
+			{
+				const auto unused = staticData->completedSoundsToQueue.find(staticData->nextSoundID) == staticData->completedSoundsToQueue.end() && staticData->completedSoundsToExecute.find(staticData->nextSoundID) == staticData->completedSoundsToExecute.end();
+				
+				if (unused)
+				{
+					const auto emplaceResults = staticData->soundsPlaying.emplace(staticData->nextSoundID);
+					
+					const auto& emplaceSuccess = emplaceResults.second;
+					if (emplaceSuccess)
+					{
+						soundID.emplace(staticData->nextSoundID);
+					}
+				}
+			}
+			
+			if (soundID)
+			{
+				channel.emplace(staticData->availableChannels.top());
+				staticData->availableChannels.pop();
+				
+				staticData->channelLookup[*channel] = *soundID;
+			}
+		}
+	}
+
+	bool success = false;
+	
+	if (channel)
+	{
+		::setSoundVolume(*channel, volume);
+
+		::setSoundPan(*channel, pan);
+		
+		const auto playResult = Mix_PlayChannel(*channel, &chunk, 0);
+		
+		if (playResult == *channel)
+		{
+			success = true;
 		}
 		else
 		{
-			std::cerr << "Channel " << channel << " was unregistered but had no corresponding onComplete to clear." << std::endl;
+			std::cerr << "Couldn't play sound on channel " << *channel << "." << std::endl;
+			
+			{
+				std::lock_guard<std::mutex> lockGuard{staticData->soundMutex};
+				
+				staticData->soundsPlaying.erase(*soundID);
+				
+				staticData->availableChannels.push(*channel);
+				
+				staticData->channelLookup.erase(*channel);
+			}
 		}
 	}
 	else
 	{
-		std::cerr << "Channel " << channel << " was unregistered but had no corresponding onComplete to clear." << std::endl;
+		std::cerr << "No available channels to play sound on." << std::endl;
 	}
-}
-
-void CPP_SDL_SoundManagerImpl::registerOnCompleteMusic(std::function<void()> onCompleteFunction)
-{
-	staticData->onCompleteFunctionQueueMusic.emplace(std::move(onCompleteFunction));
-}
-
-void CPP_SDL_SoundManagerImpl::unregisterOnCompleteMusic()
-{
-	if (!staticData->onCompleteFunctionQueueMusic.empty() && staticData->onCompleteFunctionQueueMusic.back())
+	
+	if (success)
 	{
-		staticData->onCompleteFunctionQueueMusic.back() = nullptr;
+		return std::make_unique<CPP_SDL_SoundChannel>(*soundID, *channel);
 	}
 	else
 	{
-		std::cerr << "Music was unregistered but had no corresponding onComplete to clear." << std::endl;
+		return nullptr;
+	}
+}
+
+void CPP_SDL_SoundManagerImpl::setSoundVolume(const unsigned int soundID, const int channel, const double value)
+{
+	auto playing = false;
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->soundMutex};
+		
+		if (staticData->soundsPlaying.find(soundID) != staticData->soundsPlaying.end())
+		{
+			playing = true;
+		}
+	}
+	
+	if (playing)
+	{
+		::setSoundVolume(channel, value);
+	}
+}
+
+void CPP_SDL_SoundManagerImpl::setSoundPan(const unsigned int soundID, const int channel, const double value)
+{
+	auto playing = false;
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->soundMutex};
+		
+		if (staticData->soundsPlaying.find(soundID) != staticData->soundsPlaying.end())
+		{
+			playing = true;
+		}
+	}
+	
+	if (playing)
+	{
+		::setSoundPan(channel, value);
+	}
+}
+
+void CPP_SDL_SoundManagerImpl::stopSound(const unsigned int soundID, const int channel)
+{
+	auto playing = false;
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->soundMutex};
+
+		if (staticData->soundsPlaying.find(soundID) != staticData->soundsPlaying.end())
+		{
+			playing = true;
+		}
+	}
+	
+	if (playing)
+	{
+		Mix_HaltChannel(channel);
+	}
+}
+
+void CPP_SDL_SoundManagerImpl::registerOnCompleteSound(const unsigned int soundID, std::function<void()> onCompleteFunction)
+{
+	if (staticData->completedSoundsToExecute.find(soundID) != staticData->completedSoundsToExecute.end())
+	{
+		// This sound's callback is already queued to execute.
+		return;
+	}
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->soundMutex};
+		
+		if (staticData->soundsPlaying.find(soundID) == staticData->soundsPlaying.end() &&
+			staticData->completedSoundsToQueue.find(soundID) == staticData->completedSoundsToQueue.end())
+		{
+			// This sound is not currently playing.
+			return;
+		}
+	}
+
+	staticData->onCompleteSoundFunctions[soundID] = std::move(onCompleteFunction);
+}
+
+void CPP_SDL_SoundManagerImpl::unregisterOnCompleteSound(const unsigned int soundID)
+{
+	if (staticData->completedSoundsToExecute.find(soundID) != staticData->completedSoundsToExecute.end())
+	{
+		// This sound's callback is already queued to execute.
+		return;
+	}
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->soundMutex};
+		
+		if (staticData->soundsPlaying.find(soundID) == staticData->soundsPlaying.end() &&
+			staticData->completedSoundsToQueue.find(soundID) == staticData->completedSoundsToQueue.end())
+		{
+			// This sound is not currently playing.
+			return;
+		}
+	}
+	
+	const auto onCompleteSoundFunctionsIterator = staticData->onCompleteSoundFunctions.find(soundID);
+	
+	if (onCompleteSoundFunctionsIterator != staticData->onCompleteSoundFunctions.end())
+	{
+		staticData->onCompleteSoundFunctions.erase(onCompleteSoundFunctionsIterator);
+	}
+	else
+	{
+		std::cerr << "Sound " << soundID << " was unregistered but had no corresponding onComplete to clear." << std::endl;
+	}
+}
+
+std::unique_ptr<CPP_SoundChannelIF> CPP_SDL_SoundManagerImpl::playMusic(_Mix_Music& music, const double volume)
+{	
+	std::experimental::optional<unsigned int> musicID;
+	bool availableChannel = false;
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->musicMutex};
+		
+		if (!staticData->musicPlaying)
+		{
+			for (auto i = 0u; !musicID && i < (staticData->completedMusicToQueue.size() + staticData->completedMusicToExecute.size() + 1u); ++i, ++staticData->nextMusicID)
+			{
+				const auto unused = staticData->completedMusicToQueue.find(staticData->nextMusicID) == staticData->completedMusicToQueue.end() && staticData->completedMusicToExecute.find(staticData->nextMusicID) == staticData->completedMusicToExecute.end();
+				
+				if (unused)
+				{
+					staticData->musicPlaying.emplace(staticData->nextMusicID);
+
+					musicID.emplace(staticData->nextMusicID);
+				}
+			}
+			
+			if (musicID)
+			{
+				availableChannel = true;
+			}
+		}
+	}
+	
+	bool success = false;
+	
+	if (availableChannel)
+	{
+		::setMusicVolume(volume);
+		
+		const auto playResult = Mix_PlayMusic(&music, 0);
+
+		if (!playResult)
+		{
+			success = true;
+		}
+		else
+		{
+			std::cerr << "Couldn't play music." << std::endl;
+			
+			{
+				std::lock_guard<std::mutex> lockGuard{staticData->musicMutex};
+				
+				staticData->musicPlaying = std::experimental::nullopt;
+			}
+		}
+	}
+	else
+	{
+		std::cerr << "No available channels to play music on." << std::endl;
+	}
+	
+	if (success)
+	{
+		return std::make_unique<CPP_SDL_MusicChannel>(*musicID);
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+void CPP_SDL_SoundManagerImpl::setMusicVolume(const unsigned int musicID, const double value)
+{
+	auto playing = false;
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->musicMutex};
+		
+		if (staticData->musicPlaying && *staticData->musicPlaying == musicID)
+		{
+			playing = true;
+		}
+	}
+	
+	if (playing)
+	{
+		::setMusicVolume(value);
+	}
+}
+
+void CPP_SDL_SoundManagerImpl::stopMusic(const unsigned int musicID)
+{
+	auto playing = false;
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->musicMutex};
+		
+		if (staticData->musicPlaying && *staticData->musicPlaying == musicID)
+		{
+			playing = true;
+		}
+	}
+
+	if (playing)
+	{
+		Mix_HaltMusic();
+	}
+}
+
+void CPP_SDL_SoundManagerImpl::registerOnCompleteMusic(const unsigned int musicID, std::function<void()> onCompleteFunction)
+{
+	if (staticData->completedMusicToExecute.find(musicID) != staticData->completedMusicToExecute.end())
+	{
+		// This music's callback is already queued to execute.
+		return;
+	}
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->musicMutex};
+		
+		if (!(staticData->musicPlaying && *staticData->musicPlaying == musicID) &&
+			staticData->completedMusicToQueue.find(musicID) == staticData->completedMusicToQueue.end())
+		{
+			// This music is not currently playing.
+			return;
+		}
+	}
+	
+	staticData->onCompleteMusicFunctions[musicID] = std::move(onCompleteFunction);
+}
+
+void CPP_SDL_SoundManagerImpl::unregisterOnCompleteMusic(const unsigned int musicID)
+{
+	if (staticData->completedMusicToExecute.find(musicID) != staticData->completedMusicToExecute.end())
+	{
+		// This music's callback is already queued to execute.
+		return;
+	}
+	
+	{
+		std::lock_guard<std::mutex> lockGuard{staticData->musicMutex};
+		
+		if (!(staticData->musicPlaying && *staticData->musicPlaying == musicID) &&
+			staticData->completedMusicToQueue.find(musicID) == staticData->completedMusicToQueue.end())
+		{
+			// This music is not currently playing.
+			return;
+		}
+	}
+	
+	const auto onCompleteMusicFunctionsIterator = staticData->onCompleteMusicFunctions.find(musicID);
+	
+	if (onCompleteMusicFunctionsIterator != staticData->onCompleteMusicFunctions.end())
+	{
+		staticData->onCompleteMusicFunctions.erase(onCompleteMusicFunctionsIterator);
+	}
+	else
+	{
+		std::cerr << "Music " << musicID << " was unregistered but had no corresponding onComplete to clear." << std::endl;
 	}
 }

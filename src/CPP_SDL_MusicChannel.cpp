@@ -10,16 +10,24 @@
 
 #include "CPP_SDL_SoundManagerImpl.h"
 
+#include <iostream>
+#include <utility>
+
 #include <SDL2_mixer/SDL_mixer.h>
+
+CPP_SDL_MusicChannel::CPP_SDL_MusicChannel(const unsigned int musicID) :
+  musicID{musicID}
+{
+}
 
 void CPP_SDL_MusicChannel::registerOnComplete(std::function<void()> onCompleteFunction) const
 {
-	CPP_SDL_SoundManagerImpl::registerOnCompleteMusic(std::move(onCompleteFunction));
+	CPP_SDL_SoundManagerImpl::registerOnCompleteMusic(musicID, std::move(onCompleteFunction));
 }
 
 void CPP_SDL_MusicChannel::unregisterOnComplete() const
 {
-	CPP_SDL_SoundManagerImpl::unregisterOnCompleteMusic();
+	CPP_SDL_SoundManagerImpl::unregisterOnCompleteMusic(musicID);
 }
 
 std::experimental::optional<double> CPP_SDL_MusicChannel::getPosition() const
@@ -27,22 +35,17 @@ std::experimental::optional<double> CPP_SDL_MusicChannel::getPosition() const
 	return std::experimental::nullopt;
 }
 
-bool CPP_SDL_MusicChannel::stop() const
+void CPP_SDL_MusicChannel::stop() const
 {
-	// TODO: Call a function to CPP_SDL_SoundManagerImpl to do this.
-	Mix_HaltMusic();
-	
-	// TODO: Don't always return true. Return false if the sound was not playing.
-	return true;
+	CPP_SDL_SoundManagerImpl::stopMusic(musicID);
 }
 
-void CPP_SDL_MusicChannel::setVolume(double value) const
+void CPP_SDL_MusicChannel::setVolume(const double value) const
 {
-	// TODO: Call a function to CPP_SDL_SoundManagerImpl to do this.
-	Mix_VolumeMusic(static_cast<int>((static_cast<double>(MIX_MAX_VOLUME) / 2.0) * value));
+	CPP_SDL_SoundManagerImpl::setMusicVolume(musicID, value);
 }
 
-void CPP_SDL_MusicChannel::setPan(double value) const
+void CPP_SDL_MusicChannel::setPan(const double value) const
 {
-	// TODO: Unavailable?
+	std::cerr << "Pan is unsupported for music." << std::endl;
 }

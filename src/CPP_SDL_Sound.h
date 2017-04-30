@@ -13,8 +13,6 @@
 
 #include <string>
 
-class CPP_SoundChannelIF;
-
 class Mix_Chunk;
 
 class CPP_SDL_Sound : public CPP_SoundIF

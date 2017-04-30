@@ -23,7 +23,7 @@ class CPP_Sfx
 {
 public:
 	CPP_Sfx(CPP& cpp, std::unique_ptr<CPP_SoundIF> sound, std::function<void()> complete=nullptr, std::experimental::optional<CPP_SfxType> type=std::experimental::nullopt);
-	~CPP_Sfx() = default;
+	~CPP_Sfx();
 	CPP_Sfx(const CPP_Sfx&) = default;
 	CPP_Sfx(CPP_Sfx&&) = default;
 	CPP_Sfx& operator=(const CPP_Sfx&) = default;

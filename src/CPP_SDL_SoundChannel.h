@@ -14,7 +14,7 @@
 class CPP_SDL_SoundChannel : public CPP_SoundChannelIF
 {
 public:
-	CPP_SDL_SoundChannel(int channel);
+	CPP_SDL_SoundChannel(unsigned int soundID, int channel);
 	virtual ~CPP_SDL_SoundChannel() = default;
 	CPP_SDL_SoundChannel(const CPP_SDL_SoundChannel&) = default;
 	CPP_SDL_SoundChannel(CPP_SDL_SoundChannel&&) = default;
@@ -26,15 +26,15 @@ public:
 	
 	virtual std::experimental::optional<double> getPosition() const override;
 	
-	virtual bool stop() const override;
+	virtual void stop() const override;
 	
 	virtual void setVolume(double value) const override;
 	
 	virtual void setPan(double value) const override;
 	
 private:
+	unsigned int soundID;
 	int channel;
-	// TODO: Add a sound ID to this class that is assigned by the CPP_SDL_SoundManager.
 };
 
 #endif /* CPP_SDL_SoundChannel_h */

@@ -8,7 +8,8 @@
 
 #include "CPP_SDL_Music.h"
 
-#include "CPP_SDL_MusicChannel.h"
+#include "CPP_SDL_SoundManagerImpl.h"
+#include "CPP_SoundChannelIF.h"
 
 #include <iostream>
 
@@ -17,24 +18,34 @@
 CPP_SDL_Music::CPP_SDL_Music(const std::string& filename) :
   music{Mix_LoadMUS(filename.c_str()), Mix_FreeMusic}
 {
-	// TODO: Throw an error if the file couldn't be loaded.
+	if (!music)
+	{
+		std::cerr << "Couldn't load \"" << filename << "\" into music." << std::endl;
+	}
 }
 
 std::unique_ptr<CPP_SoundChannelIF> CPP_SDL_Music::play(const double startTime, const double pan, const double volume) const
 {
-	// TODO: Don't do any of this directly in here. Call the CPP_SDL_SoundManagerImpl to do this. Returns a channel that contains the sound ID.
-	const auto success = Mix_PlayMusic(music.get(), 0);
-	
-	if (success == -1)
+	if (startTime != 0.0)
 	{
-		return nullptr;
+		std::cerr << "Playing with a non-zero start time is unsupported for music." << std::endl;
 	}
 	
-	Mix_VolumeMusic(static_cast<int>((static_cast<double>(MIX_MAX_VOLUME) / 2.0) * volume));
+	if (pan != 0.0)
+	{
+		std::cerr << "Pan is unsupported for music." << std::endl;
+	}
 	
-	// TODO: Remove this.
-	std::cout << "Music playing." << std::endl;
-	return std::make_unique<CPP_SDL_MusicChannel>();
+	if (music)
+	{
+		return CPP_SDL_SoundManagerImpl::playMusic(*music, volume);
+	}
+	else
+	{
+		std::cerr << "Music had nothing loaded." << std::endl;
+		
+		return nullptr;
+	}
 }
 
 std::experimental::optional<double> CPP_SDL_Music::getLength() const

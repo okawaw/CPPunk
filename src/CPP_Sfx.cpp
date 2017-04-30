@@ -27,6 +27,11 @@ CPP_Sfx::CPP_Sfx(CPP& cpp, std::unique_ptr<CPP_SoundIF> sound, std::function<voi
 {
 }
 
+CPP_Sfx::~CPP_Sfx()
+{
+	stop();
+}
+
 void CPP_Sfx::play(const double _vol, const double _pan)
 {
 	if (channel)

@@ -14,7 +14,7 @@
 class CPP_SDL_MusicChannel : public CPP_SoundChannelIF
 {
 public:
-	CPP_SDL_MusicChannel() = default;
+	CPP_SDL_MusicChannel(unsigned int musicID);
 	virtual ~CPP_SDL_MusicChannel() = default;
 	CPP_SDL_MusicChannel(const CPP_SDL_MusicChannel&) = default;
 	CPP_SDL_MusicChannel(CPP_SDL_MusicChannel&&) = default;
@@ -26,14 +26,14 @@ public:
 	
 	virtual std::experimental::optional<double> getPosition() const override;
 	
-	virtual bool stop() const override;
+	virtual void stop() const override;
 	
 	virtual void setVolume(double value) const override;
 	
 	virtual void setPan(double value) const override;
 	
 private:
-	
+	unsigned int musicID;
 };
 
 #endif /* CPP_SDL_MusicChannel_h */
