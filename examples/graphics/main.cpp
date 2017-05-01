@@ -7,9 +7,7 @@
 //
 
 #include "CPP.h"
-#include "CPP_BitmapDataIF.h"
 #include "CPP_Entity.h"
-#include "CPP_Graphic.h"
 #include "CPP_Image.h"
 #include "CPP_SDL_Engine.h"
 #include "CPP_World.h"
@@ -23,19 +21,14 @@ class MyWorld : public CPP_World
 public:
 	MyWorld(CPP& cpp) :
 	CPP_World{cpp}
-	, bitmapData{cpp.getBitmapData("graphic.png")}
-	, graphic{std::make_shared<CPP_Image>(std::move(bitmapData))}
-	, entity{std::make_shared<CPP_Entity>(cpp, 0.0, 0.0, std::move(graphic))}
 	{
-		add(entity);
+		auto image = std::make_shared<CPP_Image>(cpp.getBitmapData("graphic.png"));
+		auto entity = std::make_shared<CPP_Entity>(cpp, 0.0, 0.0, std::move(image));
+		
+		add(std::move(entity));
 	}
 	
 	virtual ~MyWorld() = default;
-	
-private:
-	std::unique_ptr<CPP_BitmapDataIF> bitmapData;
-	std::shared_ptr<CPP_Graphic> graphic;
-	std::shared_ptr<CPP_Entity> entity;
 };
 
 class MyEngine : public CPP_SDL_Engine

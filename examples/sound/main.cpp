@@ -15,6 +15,7 @@
 #include "CPP_World.h"
 
 #include <iostream>
+#include <memory>
 
 class MyWorld : public CPP_World
 {
