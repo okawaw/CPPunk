@@ -337,41 +337,41 @@ double CPP::distanceRects(const double x1, const double y1, const double w1, con
 	return distance(x1 + w1, y1 + h1, x2, y2);
 }
 
-double CPP::distanceRectPoint(const double px, const double py, const double rx, const double ry, const double rw, const double rh)
+double CPP::distanceRectPoint(const double pX, const double pY, const double rX, const double rY, const double rW, const double rH)
 {
-	if (px >= rx && px <= rx + rw)
+	if (pX >= rX && pX <= rX + rW)
 	{
-		if (py >= ry && py <= ry + rh)
+		if (pY >= rY && pY <= rY + rH)
 		{
 			return 0.0;
 		}
-		if (py > ry)
+		if (pY > rY)
 		{
-			return py - (ry + rh);
+			return pY - (rY + rH);
 		}
-		return ry - py;
+		return rY - pY;
 	}
-	if (py >= ry && py <= ry + rh)
+	if (pY >= rY && pY <= rY + rH)
 	{
-		if (px > rx)
+		if (pX > rX)
 		{
-			return px - (rx + rw);
+			return pX - (rX + rW);
 		}
-		return rx - px;
+		return rX - pX;
 	}
-	if (px > rx)
+	if (pX > rX)
 	{
-		if (py > ry)
+		if (pY > rY)
 		{
-			return distance(px, py, rx + rw, ry + rh);
+			return distance(pX, pY, rX + rW, rY + rH);
 		}
-		return distance(px, py, rx + rw, ry);
+		return distance(pX, pY, rX + rW, rY);
 	}
-	if (py > ry)
+	if (pY > rY)
 	{
-		return distance(px, py, rx, ry + rh);
+		return distance(pX, pY, rX, rY + rH);
 	}
-	return distance(px, py, rx, ry);
+	return distance(pX, pY, rX, rY);
 }
 
 double CPP::clamp(const double value, const double min, const double max)

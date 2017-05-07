@@ -161,7 +161,7 @@ public:
 	
 	static double distanceRects(double x1, double y1, double w1, double h1, double x2, double y2, double w2, double h2);
 	
-	static double distanceRectPoint(double px, double py, double rx, double ry, double rw, double rh);
+	static double distanceRectPoint(double pX, double pY, double rX, double rY, double rW, double rH);
 	
 	static double clamp(double value, double min, double max);
 	

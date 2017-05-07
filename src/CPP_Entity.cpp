@@ -14,6 +14,7 @@
 #include "CPP_Point.h"
 #include "CPP_World.h"
 
+#include <cmath>
 #include <iterator>
 #include <utility>
 
@@ -27,7 +28,10 @@ CPP_Entity::CPP_Entity(CPP& _cpp, const double _x, const double _y, std::shared_
 , height{0}
 , originX{0}
 , originY{0}
+, _moveX{0.0}
+, _moveY{0.0}
 , layer{0}
+, _class{nullptr}
 {
 	if (_graphic)
 	{
@@ -295,6 +299,188 @@ void CPP_Entity::setMask(std::shared_ptr<CPP_Mask> value)
 	}
 }
 
+void CPP_Entity::setHitbox(const int _width, const int _height, const int _originX, const int _originY)
+{
+	width = _width;
+	height = _height;
+	originX = _originX;
+	originY = _originY;
+}
+
+void CPP_Entity::setOrigin(const int _x, const int _y)
+{
+	originX = _x;
+	originY = _y;
+}
+
+void CPP_Entity::centerOrigin()
+{
+	originX = width / 2;
+	originY = height / 2;
+}
+
+double CPP_Entity::distanceFrom(const CPP_Entity& e, const bool useHitboxes) const
+{
+	if (!useHitboxes)
+	{
+		return std::sqrt((x - e.x) * (x - e.x) + (y - e.y) * (y - e.y));
+	}
+	else
+	{
+		return CPP::distanceRects(x - static_cast<double>(originX), y - static_cast<double>(originY), static_cast<double>(width), static_cast<double>(height), e.x - static_cast<double>(e.originX), e.y - static_cast<double>(e.originY), static_cast<double>(e.width), static_cast<double>(e.height));
+	}
+}
+
+double CPP_Entity::distanceToPoint(const double pX, const double pY, const bool useHitbox) const
+{
+	if (!useHitbox)
+	{
+		return std::sqrt((x - pX) * (x - pX) + (y - pY) * (y - pY));
+	}
+	else
+	{
+		return CPP::distanceRectPoint(pX, pY, x - static_cast<double>(originX), y - static_cast<double>(originY), static_cast<double>(width), static_cast<double>(height));
+	}
+}
+
+double CPP_Entity::distanceToRect(const double rX, const double rY, const double rWidth, const double rHeight) const
+{
+	return CPP::distanceRects(rX, rY, rWidth, rHeight, x - static_cast<double>(originX), y - static_cast<double>(originY), static_cast<double>(width), static_cast<double>(height));
+}
+
+std::string CPP_Entity::toString() const
+{
+	return {getClass().name()};
+}
+
+// TODO: CHECK THIS ALL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+void CPP_Entity::moveBy(double x, double y, const std::experimental::optional<std::vector<CPP_EntityType> >& solidType, const bool sweep)
+{
+	_moveX += x;
+	_moveY += y;
+	x = std::round(_moveX);
+	y = std::round(_moveY);
+	_moveX -= x;
+	_moveY -= y;
+	
+	if (solidType)
+	{
+		int sign;
+		std::shared_ptr<CPP_Entity> e;
+		
+		if (x != 0.0)
+		{
+			if (sweep || collideTypes(*solidType, this->x + x, this->y))
+			{
+				sign = x > 0.0 ? 1 : -1;
+				
+				while (x != 0.0)
+				{
+					if ((e = collideTypes(*solidType, this->x + static_cast<double>(sign), this->y)))
+					{
+						if (moveCollideX(*e))
+						{
+							break;
+						}
+						else
+						{
+							this->x += static_cast<double>(sign);
+						}
+					}
+					else
+					{
+						this->x += static_cast<double>(sign);
+					}
+					
+					x -= static_cast<double>(sign);
+				}
+			}
+			else
+			{
+				this->x += x;
+			}
+		}
+		if (y != 0.0)
+		{
+			if (sweep || collideTypes(*solidType, this->x, this->y + y))
+			{
+				sign = y > 0.0 ? 1 : -1;
+				
+				while (y != 0.0)
+				{
+					if ((e = collideTypes(*solidType, this->x, this->y + static_cast<double>(sign))))
+					{
+						if (moveCollideY(*e))
+						{
+							break;
+						}
+						else
+						{
+							this->y += static_cast<double>(sign);
+						}
+					}
+					else
+					{
+						this->y += static_cast<double>(sign);
+					}
+					
+					y -= static_cast<double>(sign);
+				}
+			}
+			else
+			{
+				this->y += y;
+			}
+		}
+	}
+	else
+	{
+		this->x += x;
+		this->y += y;
+	}
+}
+
+void CPP_Entity::moveTo(const double x, const double y, const std::experimental::optional<std::vector<CPP_EntityType> >& solidType, const bool sweep)
+{
+	moveBy(x - this->x, y - this->y, solidType, sweep);
+}
+
+void CPP_Entity::moveTowards(const double x, const double y, const double amount, const std::experimental::optional<std::vector<CPP_EntityType> >& solidType, const bool sweep)
+{
+	CPP_Point point{x - this->x, y - this->y};
+	
+	if (point.x * point.x + point.y * point.y > amount * amount)
+	{
+		point.normalize(amount);
+	}
+	
+	moveBy(point.x, point.y, solidType, sweep);
+}
+
+void CPP_Entity::clampHorizontal(const double left, const double right, const double padding)
+{
+	if (x - static_cast<double>(originX) < left + padding)
+	{
+		x = left + static_cast<double>(originX) + padding;
+	}
+	if (x - static_cast<double>(originX) + static_cast<double>(width) > right - padding)
+	{
+		x = right - static_cast<double>(width) + static_cast<double>(originX) - padding;
+	}
+}
+
+void CPP_Entity::clampVertical(const double top, const double bottom, const double padding)
+{
+	if (y - static_cast<double>(originY) < top + padding)
+	{
+		y = top + static_cast<double>(originY) + padding;
+	}
+	if (y - static_cast<double>(originY) + static_cast<double>(height) > bottom - padding)
+	{
+		y = bottom - static_cast<double>(height) + static_cast<double>(originY) - padding;
+	}
+}
+
 std::shared_ptr<CPP_World> CPP_Entity::getWorld() const
 {
 	return world.lock();
@@ -492,4 +678,23 @@ bool CPP_Entity::isOnCamera() const
 	return collideRect(x, y, camera.x, camera.y, cpp.getWidth(), cpp.getHeight());
 }
 
+bool CPP_Entity::moveCollideX(const CPP_Entity&)
+{
+	return true;
+}
+
+bool CPP_Entity::moveCollideY(const CPP_Entity&)
+{
+	return true;
+}
+
+const std::type_info& CPP_Entity::getClass() const
+{
+	if (!_class)
+	{
+		_class = &typeid(*this);
+	}
+	
+	return *_class;
+}
 
